@@ -1,0 +1,14 @@
+{
+  "frontend/src/App.tsx": "Main application component with TanStack Router setup, defining all routes (home, product detail, cart, payment, order success, admin) with a shared layout including Header and Footer.",
+  "frontend/src/hooks/useQueries.ts": "React Query hooks for all backend operations including fetching products, managing cart, calculating totals, adding products/reviews, and checkout functionality.",
+  "frontend/src/components/Header.tsx": "Sticky navigation header with GLORY 123 branding, navigation links to Products and Admin pages, and a shopping cart icon with item count badge.",
+  "frontend/src/components/Footer.tsx": "Footer component displaying contact information (phone: 9892246308, address: R.N.15 DHARAVI MUMBAI), social media links, and Caffeine.ai attribution with UTM tracking.",
+  "frontend/src/pages/ProductListPage.tsx": "Main product listing page with hero banner, search functionality, category filtering, and responsive product grid displaying all products with images, prices, and categories.",
+  "frontend/src/pages/ProductDetailPage.tsx": "Product detail page showing full product information, add-to-cart functionality, and customer reviews section with ability to submit new reviews.",
+  "frontend/src/pages/CartPage.tsx": "Shopping cart page displaying cart items with product details, quantity adjustment controls, and order summary with proceed-to-payment button.",
+  "frontend/src/pages/PaymentPage.tsx": "Payment page offering Cash on Delivery and UPI payment options, displaying UPI ID (9892246308-2@axl) with copy functionality, and order summary.",
+  "frontend/src/pages/OrderSuccessPage.tsx": "Order confirmation page displayed after successful checkout with success message and navigation options to continue shopping or view cart.",
+  "frontend/src/pages/AdminPage.tsx": "Admin panel for adding new products with form fields for name, category, price, and description, connected to backend addProduct functionality.",
+  "frontend/src/index.css": "Global styles with OKLCH-based yellow theme color system for both light and dark modes, featuring rich gold/yellow primary colors and Apple-inspired typography with tight letter spacing.",
+  "frontend/tailwind.config.js": "Tailwind configuration with yellow theme colors, Apple-inspired SF Pro Display font stack, custom letter spacing, and soft shadows for minimalist design aesthetic."
+}

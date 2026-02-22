@@ -1,0 +1,170 @@
+{
+  "kind": "implementation_plan",
+  "version": "1.0",
+  "title": "GLORY 123 E-commerce Frontend Implementation",
+  "requirements": [
+    {
+      "id": "REQ-1",
+      "summary": "Implement yellow color theme with Apple-inspired minimalist design",
+      "acceptanceCriteria": [
+        "Primary color scheme uses yellow as the dominant theme color",
+        "Design features clean typography and generous whitespace",
+        "Layout is minimalist and visually polished"
+      ],
+      "file_operations": [
+        {
+          "path": "frontend/src/index.css",
+          "operation": "modify",
+          "description": "Update global styles to establish yellow as the primary theme color. Define CSS custom properties for yellow color palette (primary, light, dark shades). Apply clean typography styles with increased letter-spacing and line-height. Set generous margin and padding defaults for whitespace."
+        },
+        {
+          "path": "frontend/tailwind.config.js",
+          "operation": "modify",
+          "description": "Configure Tailwind theme with yellow color palette as primary. Extend default theme with custom yellow shades. Configure typography plugin for clean, readable font settings. Set spacing scale to support generous whitespace throughout the application."
+        }
+      ]
+    },
+    {
+      "id": "REQ-3",
+      "summary": "Build admin interface for product management",
+      "acceptanceCriteria": [
+        "Admin can create new products via a form",
+        "Form includes fields for name, category, price, and description",
+        "Products are successfully stored in the backend"
+      ],
+      "file_operations": [
+        {
+          "path": "frontend/src/pages/AdminPage.tsx",
+          "operation": "create",
+          "description": "Create admin page component with product management form. Include form fields for product name (text input), category (select or text input), price (number input), and description (textarea). Wire form submission to backend addProduct capability. Display success/error feedback after submission. Style with yellow theme and minimalist design."
+        },
+        {
+          "path": "frontend/src/App.tsx",
+          "operation": "modify",
+          "description": "Add route for /admin path pointing to AdminPage component. Ensure admin route is accessible via navigation or direct URL access."
+        }
+      ]
+    },
+    {
+      "id": "REQ-4",
+      "summary": "Display products with category filtering and customer reviews",
+      "acceptanceCriteria": [
+        "Products are displayed on the main page",
+        "Users can filter products by category",
+        "Product detail view shows customer reviews below product information"
+      ],
+      "file_operations": [
+        {
+          "path": "frontend/src/pages/ProductListPage.tsx",
+          "operation": "create",
+          "description": "Create product listing page that fetches all products from backend. Display products in a grid layout with product images (using generated placeholder images from frontend/public/assets/generated/product-placeholder-1.dim_400x400.png, product-placeholder-2.dim_400x400.png, product-placeholder-3.dim_400x400.png), name, category, and price. Implement category filter dropdown that filters displayed products. Wire generated hero banner image (frontend/public/assets/generated/hero-banner.dim_1920x600.png) into a hero section at the top of the page. Style with yellow theme and generous whitespace."
+        },
+        {
+          "path": "frontend/src/pages/ProductDetailPage.tsx",
+          "operation": "create",
+          "description": "Create product detail page that displays full product information including name, category, price, description, and product image. Fetch product data by ID from backend. Display customer reviews section below product details showing all reviews for the product. Include 'Add to Cart' button that calls backend addToCart capability. Style with yellow theme and clean typography."
+        },
+        {
+          "path": "frontend/src/App.tsx",
+          "operation": "modify",
+          "description": "Add route for / (root path) pointing to ProductListPage component. Add route for /product/:id pointing to ProductDetailPage component. Ensure these routes are registered in the application router."
+        }
+      ]
+    },
+    {
+      "id": "REQ-5",
+      "summary": "Implement shopping cart with quantity adjustment and total price",
+      "acceptanceCriteria": [
+        "Cart page displays all items added to cart",
+        "Users can adjust item quantities in cart",
+        "Total price updates dynamically based on cart contents"
+      ],
+      "file_operations": [
+        {
+          "path": "frontend/src/pages/CartPage.tsx",
+          "operation": "create",
+          "description": "Create cart page that fetches cart items using backend viewCart capability. Display each cart item with product details (name, price), quantity controls (increment/decrement buttons), and subtotal. Call backend addToCart capability when quantity is adjusted. Fetch and display total price using backend calculateTotal capability. Include 'Proceed to Payment' button linking to payment page. Style with yellow theme and clear visual hierarchy."
+        },
+        {
+          "path": "frontend/src/App.tsx",
+          "operation": "modify",
+          "description": "Add route for /cart path pointing to CartPage component. Ensure cart route is accessible from navigation menu."
+        },
+        {
+          "path": "frontend/src/components/Header.tsx",
+          "operation": "create",
+          "description": "Create header navigation component with links to main pages (Products, Cart, Admin). Include cart icon with item count badge. Style with yellow accents and minimal design. Use across all pages for consistent navigation."
+        },
+        {
+          "path": "frontend/src/App.tsx",
+          "operation": "modify",
+          "description": "Wire Header component into App.tsx layout so it appears on all pages."
+        }
+      ]
+    },
+    {
+      "id": "REQ-6",
+      "summary": "Create payment page with Cash on Delivery and UPI options",
+      "acceptanceCriteria": [
+        "Payment page offers Cash on Delivery option",
+        "Payment page offers UPI payment option",
+        "UPI payments display or use UPI ID 9892246308-2@axl",
+        "Order submission captures payment method choice"
+      ],
+      "file_operations": [
+        {
+          "path": "frontend/src/pages/PaymentPage.tsx",
+          "operation": "create",
+          "description": "Create payment page with two payment method options: Cash on Delivery (radio button) and UPI (radio button). When UPI is selected, display UPI ID 9892246308-2@axl prominently with copy functionality. Show order summary with total amount from backend calculateTotal capability. Include 'Complete Order' button that calls backend checkout capability with selected payment method. Handle checkout response and show success message. Style with yellow theme and clear payment option presentation."
+        },
+        {
+          "path": "frontend/src/pages/OrderSuccessPage.tsx",
+          "operation": "create",
+          "description": "Create order success page displaying confirmation message after successful checkout. Show order reference/ID returned from backend checkout capability. Include link to return to product listing. Style with yellow theme and celebratory but minimal design."
+        },
+        {
+          "path": "frontend/src/App.tsx",
+          "operation": "modify",
+          "description": "Add route for /payment path pointing to PaymentPage component. Add route for /order-success path pointing to OrderSuccessPage component. Ensure payment page is accessible from cart page and order success page is accessible after checkout completion."
+        }
+      ]
+    },
+    {
+      "id": "REQ-7",
+      "summary": "Add product search functionality by name or description",
+      "acceptanceCriteria": [
+        "Search bar is visible on the main product listing page",
+        "Search filters products by name or description",
+        "Search results update dynamically as user types or submits query"
+      ],
+      "file_operations": [
+        {
+          "path": "frontend/src/pages/ProductListPage.tsx",
+          "operation": "modify",
+          "description": "Add search input field to product listing page header/toolbar. Implement search handler that calls backend searchProducts capability with user's search term. Update product display to show search results when search term is present. Include debouncing for search input to avoid excessive backend calls. Show 'No results' message when search returns empty array. Style search bar with yellow accents."
+        }
+      ]
+    },
+    {
+      "id": "REQ-8",
+      "summary": "Display contact information in website footer",
+      "acceptanceCriteria": [
+        "Footer is visible on all pages",
+        "Footer displays phone number: 9892246308",
+        "Footer displays address: R.N.15 DHARAVI MUMBAI"
+      ],
+      "file_operations": [
+        {
+          "path": "frontend/src/components/Footer.tsx",
+          "operation": "create",
+          "description": "Create footer component displaying contact information. Include phone number '9892246308' with phone icon. Include address 'R.N.15 DHARAVI MUMBAI' with location icon. Style with yellow accents on dark or light background for contrast and readability. Ensure footer is responsive and maintains minimalist design."
+        },
+        {
+          "path": "frontend/src/App.tsx",
+          "operation": "modify",
+          "description": "Wire Footer component into App.tsx layout so it appears at the bottom of all pages."
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,140 @@
+{
+  "kind": "feature_evidence_report",
+  "features": [
+    {
+      "featureId": "feature-implement-a-yellow-color-theme-throughout-the-website-with-a-classic-minimalist-design-inspired-by-apple-s-aesthetic-clean-typography-generous-whitespace-high-quality-product-imagery-layout",
+      "featureTitle": "Implement a yellow color theme throughout the website with a classic, minimalist design inspired by Apple's aesthetic (clean typography, generous whitespace, high-quality product imagery layout)",
+      "files": [
+        "frontend/src/index.css",
+        "frontend/tailwind.config.js"
+      ],
+      "components": [
+        "core-infrastructure@1.0.2",
+        "shadcn-ui@1.0.0",
+        "build-template-react@1.0.0",
+        "initial-app@1.0.0",
+        "github-export-icp-cli@1.0.0"
+      ],
+      "testIds": [
+        "REQ-1"
+      ],
+      "confidence": "high"
+    },
+    {
+      "featureId": "feature-build-an-admin-interface-to-add-products-assign-them-to-categories-set-prices-and-write-descriptions",
+      "featureTitle": "Build an admin interface to add products, assign them to categories, set prices, and write descriptions",
+      "files": [
+        "frontend/src/App.tsx",
+        "frontend/src/pages/AdminPage.tsx"
+      ],
+      "components": [
+        "core-infrastructure@1.0.2",
+        "shadcn-ui@1.0.0",
+        "build-template-react@1.0.0",
+        "initial-app@1.0.0",
+        "github-export-icp-cli@1.0.0"
+      ],
+      "testIds": [
+        "REQ-3"
+      ],
+      "confidence": "high"
+    },
+    {
+      "featureId": "feature-display-products-on-the-main-page-with-category-filtering-and-show-customer-reviews-below-each-product-detail-view",
+      "featureTitle": "Display products on the main page with category filtering and show customer reviews below each product detail view",
+      "files": [
+        "frontend/src/App.tsx",
+        "frontend/src/pages/ProductDetailPage.tsx",
+        "frontend/src/pages/ProductListPage.tsx"
+      ],
+      "components": [
+        "core-infrastructure@1.0.2",
+        "shadcn-ui@1.0.0",
+        "build-template-react@1.0.0",
+        "initial-app@1.0.0",
+        "github-export-icp-cli@1.0.0"
+      ],
+      "testIds": [
+        "REQ-4"
+      ],
+      "confidence": "high"
+    },
+    {
+      "featureId": "feature-implement-a-shopping-cart-page-where-users-can-view-selected-products-adjust-quantities-and-see-the-total-price",
+      "featureTitle": "Implement a shopping cart page where users can view selected products, adjust quantities, and see the total price",
+      "files": [
+        "frontend/src/App.tsx",
+        "frontend/src/components/Header.tsx",
+        "frontend/src/pages/CartPage.tsx"
+      ],
+      "components": [
+        "core-infrastructure@1.0.2",
+        "shadcn-ui@1.0.0",
+        "build-template-react@1.0.0",
+        "initial-app@1.0.0",
+        "github-export-icp-cli@1.0.0"
+      ],
+      "testIds": [
+        "REQ-5"
+      ],
+      "confidence": "high"
+    },
+    {
+      "featureId": "feature-create-a-payment-page-with-two-payment-options-cash-on-delivery-and-upi-where-upi-payments-are-directed-to-upi-id-9892246308-2-axl",
+      "featureTitle": "Create a payment page with two payment options: Cash on Delivery and UPI, where UPI payments are directed to UPI ID 9892246308-2@axl",
+      "files": [
+        "frontend/src/App.tsx",
+        "frontend/src/pages/OrderSuccessPage.tsx",
+        "frontend/src/pages/PaymentPage.tsx"
+      ],
+      "components": [
+        "core-infrastructure@1.0.2",
+        "shadcn-ui@1.0.0",
+        "build-template-react@1.0.0",
+        "initial-app@1.0.0",
+        "github-export-icp-cli@1.0.0"
+      ],
+      "testIds": [
+        "REQ-6"
+      ],
+      "confidence": "high"
+    },
+    {
+      "featureId": "feature-add-a-product-search-functionality-that-allows-users-to-search-for-products-by-name-or-description",
+      "featureTitle": "Add a product search functionality that allows users to search for products by name or description",
+      "files": [
+        "frontend/src/pages/ProductListPage.tsx"
+      ],
+      "components": [
+        "core-infrastructure@1.0.2",
+        "shadcn-ui@1.0.0",
+        "build-template-react@1.0.0",
+        "initial-app@1.0.0",
+        "github-export-icp-cli@1.0.0"
+      ],
+      "testIds": [
+        "REQ-7"
+      ],
+      "confidence": "high"
+    },
+    {
+      "featureId": "feature-display-contact-information-in-the-website-footer-with-phone-number-9892246308-and-address-r-n-15-dharavi-mumbai",
+      "featureTitle": "Display contact information in the website footer with phone number 9892246308 and address R.N.15 DHARAVI MUMBAI",
+      "files": [
+        "frontend/src/App.tsx",
+        "frontend/src/components/Footer.tsx"
+      ],
+      "components": [
+        "core-infrastructure@1.0.2",
+        "shadcn-ui@1.0.0",
+        "build-template-react@1.0.0",
+        "initial-app@1.0.0",
+        "github-export-icp-cli@1.0.0"
+      ],
+      "testIds": [
+        "REQ-8"
+      ],
+      "confidence": "high"
+    }
+  ]
+}

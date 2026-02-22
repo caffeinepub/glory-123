@@ -1,2 +1,3 @@
-# glory-123
-Exported from Caffeine project: GLORY 123
+## GLORY 123
+
+To run app build and run docker image: `docker build -t app . docker run -it --network host app`

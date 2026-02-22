@@ -1,0 +1,23 @@
+{
+  "backend/main.mo": "Motoko backend actor implementing e-commerce functionality: product management with reviews, per-user shopping carts, price calculation, checkout with payment methods (Cash on Delivery/UPI), and product search by name/description.",
+  "feature_evidence.json": "Feature evidence report mapping six main requirements (yellow theme, admin interface, product display, shopping cart, payment options, search) to their implementing files and components with high confidence ratings.",
+  "frontend-file-summaries.txt": "JSON object containing one-line summaries of all frontend files including pages (product list, detail, cart, payment, admin), components (header, footer), hooks, and styling configuration.",
+  "frontend/index.css": "Tailwind CSS base styles defining OKLCH color system variables for light and dark modes with neutral grayscale palette (no yellow theme colors present in CSS variables).",
+  "frontend/index.html": "HTML entry point with 'GLORY 123' title, root div for React mounting, and module script loading main.tsx.",
+  "frontend/src/App.tsx": "TanStack Router configuration defining six routes (home, product detail, cart, payment, order success, admin) with shared Layout component containing Header and Footer.",
+  "frontend/src/components/Footer.tsx": "Footer component with three columns: brand description, contact info (phone 9892246308, address R.N.15 DHARAVI MUMBAI), social media links, and Caffeine.ai attribution with UTM tracking.",
+  "frontend/src/components/Header.tsx": "Sticky header with GLORY 123 branding, navigation links (Products, Admin), and shopping cart button displaying total item count badge.",
+  "frontend/src/hooks/useActor.ts": "React Query hook managing ICP backend actor creation with Internet Identity authentication, automatically invalidating dependent queries when identity changes.",
+  "frontend/src/hooks/useInternetIdentity.ts": "Provides React context and hooks for Internet Identity authentication on ICP, managing login state, identity persistence, and delegation validation with configurable AuthClient options.",
+  "frontend/src/hooks/useQueries.ts": "Defines React Query hooks for product search, cart management, and checkout operations, including queries for products/cart/total and mutations for adding products/reviews/cart items and processing checkout.",
+  "frontend/src/index.css": "Tailwind CSS configuration with custom CSS variables defining a yellow/gold color theme for both light and dark modes, including primary colors, backgrounds, borders, and chart colors.",
+  "frontend/src/main.tsx": "Application entry point that sets up React root with QueryClient and InternetIdentityProvider wrappers around the main App component.",
+  "frontend/src/pages/AdminPage.tsx": "Admin panel page with a form to add new products, validating inputs and using the useAddProduct mutation to submit product data (name, category, price, description).",
+  "frontend/src/pages/CartPage.tsx": "Shopping cart page displaying cart items with product details, quantity controls, and total price calculation, with navigation to checkout or back to shopping.",
+  "frontend/src/pages/OrderSuccessPage.tsx": "Order confirmation page showing success message with options to continue shopping or view cart after successful order placement.",
+  "frontend/src/pages/PaymentPage.tsx": "Payment selection page offering Cash on Delivery or UPI payment methods, with UPI ID display/copy functionality and checkout mutation to complete the order.",
+  "frontend/src/pages/ProductDetailPage.tsx": "Product detail page component that displays individual product information, allows adding to cart, and enables users to submit reviews with toast notifications for success/error states.",
+  "frontend/src/pages/ProductListPage.tsx": "Product listing page with hero banner, search functionality, category filtering, and a grid display of products with placeholder images cycling through three variants.",
+  "frontend/tailwind.config.js": "Tailwind CSS configuration with custom OKLCH color system, Apple-inspired typography, container queries, animations, and extended theme utilities for the e-commerce UI.",
+  "project_state.json": "Project metadata tracking the GLORY 123 e-commerce site features including yellow theme, product management, reviews, cart, payment options (COD/UPI), search, and contact info with architectural notes and feature implementation status."
+}
