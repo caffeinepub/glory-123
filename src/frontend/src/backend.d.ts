@@ -7,17 +7,11 @@ export interface None {
     __kind__: "None";
 }
 export type Option<T> = Some<T> | None;
-export interface CartItem {
-    productId: bigint;
-    quantity: bigint;
+export interface http_request_result {
+    status: bigint;
+    body: Uint8Array;
+    headers: Array<http_header>;
 }
-export type PaymentMethod = {
-    __kind__: "upi";
-    upi: string;
-} | {
-    __kind__: "cashOnDelivery";
-    cashOnDelivery: null;
-};
 export interface Product {
     id: bigint;
     reviews: Array<string>;
@@ -27,13 +21,75 @@ export interface Product {
     category: string;
     price: number;
 }
+export interface TransformationOutput {
+    status: bigint;
+    body: Uint8Array;
+    headers: Array<http_header>;
+}
+export interface ShoppingItem {
+    productName: string;
+    currency: string;
+    quantity: bigint;
+    priceInCents: bigint;
+    productDescription: string;
+}
+export interface TransformationInput {
+    context: Uint8Array;
+    response: http_request_result;
+}
+export type StripeSessionStatus = {
+    __kind__: "completed";
+    completed: {
+        userPrincipal?: string;
+        response: string;
+    };
+} | {
+    __kind__: "failed";
+    failed: {
+        error: string;
+    };
+};
+export interface StripeConfiguration {
+    allowedCountries: Array<string>;
+    secretKey: string;
+}
+export interface CartItem {
+    productId: bigint;
+    quantity: bigint;
+}
+export interface UserProfile {
+    name: string;
+    email: string;
+    shippingAddress: string;
+}
+export interface http_header {
+    value: string;
+    name: string;
+}
+export enum UserRole {
+    admin = "admin",
+    user = "user",
+    guest = "guest"
+}
 export interface backendInterface {
     addProduct(name: string, category: string, price: number, description: string): Promise<bigint>;
     addReview(productId: bigint, review: string): Promise<void>;
     addToCart(productId: bigint, quantity: bigint): Promise<void>;
+    assignCallerUserRole(user: Principal, role: UserRole): Promise<void>;
     calculateTotal(): Promise<number>;
-    checkout(paymentMethod: PaymentMethod): Promise<string>;
+    createCheckoutSession(items: Array<ShoppingItem>, successUrl: string, cancelUrl: string): Promise<string>;
+    createStripeSession(successUrl: string, cancelUrl: string): Promise<string>;
+    getCallerUserProfile(): Promise<UserProfile | null>;
+    getCallerUserRole(): Promise<UserRole>;
+    getStripeSessionStatus(sessionId: string): Promise<StripeSessionStatus>;
+    getUserProfile(user: Principal): Promise<UserProfile | null>;
+    isCallerAdmin(): Promise<boolean>;
+    isStripeConfigured(): Promise<boolean>;
+    saveCallerUserProfile(profile: UserProfile): Promise<void>;
     searchProducts(searchTerm: string): Promise<Array<Product>>;
+    setStripeConfiguration(config: StripeConfiguration): Promise<void>;
+    transform(input: TransformationInput): Promise<TransformationOutput>;
+    updateCartQuantity(productId: bigint, newQuantity: bigint): Promise<void>;
     uploadProductImage(productId: bigint, imageData: string): Promise<void>;
     viewCart(): Promise<Array<CartItem>>;
 }

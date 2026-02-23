@@ -1,90 +1,74 @@
 {
   "kind": "build_request",
-  "title": "Add admin password authentication",
+  "title": "Integrate Stripe payment processing",
   "projectName": "GLORY 123",
   "priority": "normal",
   "requirements": [
     {
       "id": "REQ-1",
-      "text": "Create a backend method to set and verify an admin password using secure hashing",
-      "target": "backend",
+      "text": "Add Stripe payment processing integration to replace the current payment methods (Cash on Delivery and UPI). The payment flow should automatically confirm orders upon successful payment.",
+      "target": "both",
       "source": {
         "messageIds": [
-          "msg-user-latest"
+          "msg-recent"
         ],
         "quotes": [
-          "adding admin login authentication with a password"
+          "set up Stripe payments"
         ]
       },
       "acceptanceCriteria": [
-        "Backend stores a hashed admin password",
-        "Backend provides a method to verify password on login attempts",
-        "Password verification returns success/failure status"
+        "Stripe payment option is available on the payment page",
+        "Users can complete payment through Stripe's secure checkout",
+        "Orders are automatically confirmed after successful Stripe payment",
+        "Payment confirmation updates the order status in the backend"
       ]
     },
     {
       "id": "REQ-2",
-      "text": "Add admin login form on AdminPage with password input field",
+      "text": "Update the PaymentPage.tsx to include Stripe as a payment method option alongside or replacing existing payment methods.",
       "target": "frontend",
       "source": {
         "messageIds": [
-          "msg-user-latest"
+          "msg-recent"
         ],
         "quotes": [
-          "adding admin login authentication with a password"
+          "make the payment page well where I can connect my bank"
         ]
       },
       "acceptanceCriteria": [
-        "AdminPage displays a login form when user is not authenticated",
-        "Login form includes password input field and submit button",
-        "Form validates password is not empty before submission"
+        "Payment page displays Stripe payment option",
+        "Payment method selection works correctly",
+        "UI clearly indicates secure payment processing"
       ]
     },
     {
       "id": "REQ-3",
-      "text": "Protect the product upload form and category management features behind admin authentication",
-      "target": "frontend",
+      "text": "Implement backend logic to handle Stripe payment webhooks and automatically confirm orders when payment is successful.",
+      "target": "backend",
       "source": {
         "messageIds": [
-          "msg-user-latest"
+          "msg-recent"
         ],
         "quotes": [
-          "so only I can upload products and edit categories no other user"
+          "when the customer have paid for the order my bank will detect it automatically and then you conform the order"
         ]
       },
       "acceptanceCriteria": [
-        "Product upload form is only visible after successful admin login",
-        "Unauthenticated users see only the login form on AdminPage",
-        "Admin session persists across page refreshes"
-      ]
-    },
-    {
-      "id": "REQ-4",
-      "text": "Add admin logout functionality",
-      "target": "frontend",
-      "source": {
-        "messageIds": [
-          "msg-user-latest"
-        ]
-      },
-      "acceptanceCriteria": [
-        "Authenticated admin can log out from the AdminPage",
-        "Logout clears admin session and returns to login form",
-        "Logout button is visible only when admin is authenticated"
+        "Backend receives and validates Stripe webhook events",
+        "Order status is updated to confirmed upon successful payment",
+        "Failed payments do not confirm orders"
       ]
     }
   ],
   "constraints": [
-    "Do not change existing product upload or cart functionality",
-    "Maintain compatibility with existing Product and Cart data structures",
-    "Keep the single-actor backend architecture"
+    "Must use Stripe for payment processing (external bank integration is not supported)",
+    "Preserve existing product management and cart functionality",
+    "Do not modify Internet Identity authentication hooks"
   ],
   "nonGoals": [
-    "Payment page with bank connection",
-    "Order tracking system",
-    "Unique order codes",
-    "Analytics dashboard",
-    "Multi-user admin system with different permission levels"
+    "Direct bank account integration",
+    "Custom payment gateway development",
+    "Real-time bank transaction monitoring outside of Stripe"
   ],
   "imageRequirements": {
     "required": [],

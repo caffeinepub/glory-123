@@ -1,36 +1,30 @@
 {
   "schemaVersion": "1.0.0",
   "projectStateVersion": 3,
-  "summary": "Admin authentication system with login and password protection for product uploads and category management",
+  "summary": "E-commerce project with shopping cart functionality and pending Stripe payment integration",
   "architectural_notes": [
-    "Admin-only access required for product uploads and category editing",
-    "Authentication system needed to protect admin routes",
-    "Payment integration required for automatic order confirmation"
+    "Shopping cart with quantity adjustment functionality",
+    "Payment processing via Stripe API integration"
   ],
-  "known_issues": [],
-  "isFixRequest": false,
+  "known_issues": [
+    "Deployment errors preventing production releases",
+    "Stripe integration requires additional setup configuration"
+  ],
+  "isFixRequest": true,
   "existing_features": [
     {
-      "id": "feature-add-admin-login-form-on-adminpage-with-password-input-field",
-      "title": "Add admin login form on AdminPage with password input field",
+      "id": "feature-add-stripe-payment-processing-integration-to-replace-the-current-payment-methods-cash-on-delivery-and-upi-the-payment-flow-should-automatically-confirm-orders-upon-successful-payment",
+      "title": "Add Stripe payment processing integration to replace the current payment methods (Cash on Delivery and UPI). The payment flow should automatically confirm orders upon successful payment.",
+      "reqIds": [
+        "REQ-1"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-update-the-paymentpage-tsx-to-include-stripe-as-a-payment-method-option-alongside-or-replacing-existing-payment-methods",
+      "title": "Update the PaymentPage.tsx to include Stripe as a payment method option alongside or replacing existing payment methods.",
       "reqIds": [
         "REQ-2"
-      ],
-      "version": 1
-    },
-    {
-      "id": "feature-protect-the-product-upload-form-and-category-management-features-behind-admin-authentication",
-      "title": "Protect the product upload form and category management features behind admin authentication",
-      "reqIds": [
-        "REQ-3"
-      ],
-      "version": 1
-    },
-    {
-      "id": "feature-add-admin-logout-functionality",
-      "title": "Add admin logout functionality",
-      "reqIds": [
-        "REQ-4"
       ],
       "version": 1
     }
@@ -38,49 +32,20 @@
   "new_feature_requests": [
     {
       "id": "AR-1",
-      "summary": "Admin login authentication with password",
+      "summary": "Integrate Stripe payment processing with automatic payment confirmation",
       "reqIds": [],
       "status": "in_progress"
     },
     {
-      "id": "AR-2",
-      "summary": "Payment page with bank connection for automatic order confirmation",
-      "reqIds": [],
-      "status": "pending"
-    },
-    {
-      "id": "AR-3",
-      "summary": "Order tracking system for customers",
-      "reqIds": [],
-      "status": "pending"
-    },
-    {
       "id": "AR-4",
-      "summary": "Admin order management with status updates",
-      "reqIds": [],
-      "status": "pending"
-    },
-    {
-      "id": "AR-5",
-      "summary": "Unique order code generation",
-      "reqIds": [],
-      "status": "pending"
-    },
-    {
-      "id": "AR-6",
-      "summary": "Analytics system in admin dashboard",
-      "reqIds": [],
-      "status": "pending"
-    },
-    {
-      "id": "AR-7",
-      "summary": "Create a backend method to set and verify an admin password using secure hashing",
+      "summary": "Implement backend logic to handle Stripe payment webhooks and automatically confirm orders when payment is successful.",
       "reqIds": [
-        "REQ-1"
+        "REQ-3"
       ],
       "status": "pending"
     }
   ],
+  "gameProjectType": "none",
   "projectName": "GLORY 123",
   "clarification_mode": "instant",
   "clarification_rounds": 0

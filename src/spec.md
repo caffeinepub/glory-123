@@ -1,13 +1,12 @@
 # Specification
 
 ## Summary
-**Goal:** Add admin password authentication to protect product upload and category management features.
+**Goal:** Integrate Stripe payment processing to enable secure online payments and automatic order confirmation.
 
 **Planned changes:**
-- Create backend method to securely hash and verify admin password
-- Add admin login form with password input on AdminPage
-- Protect product upload form and category management behind authentication
-- Add admin logout functionality
-- Persist admin session across page refreshes
+- Add Stripe payment integration to the payment page
+- Implement backend webhook handling for Stripe payment events
+- Update order confirmation flow to automatically confirm orders upon successful Stripe payment
+- Replace or complement existing payment methods (Cash on Delivery and UPI) with Stripe checkout
 
-**User-visible outcome:** Admin must log in with a password to access product upload and category management features. Unauthenticated users only see the login form on the admin page.
+**User-visible outcome:** Users can securely pay for orders using Stripe's payment system, and orders are automatically confirmed when payment succeeds.

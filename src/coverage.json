@@ -1,72 +1,78 @@
 {
   "kind": "coverage_report",
   "version": "1.0",
-  "generatedAt": "2026-02-23T15:02:15.600Z",
+  "generatedAt": "2026-02-23T23:52:07.509Z",
   "sources": {
     "buildRequest": true,
     "implementationPlan": true
   },
   "requirements": {
-    "total": 4,
-    "implemented": 3,
+    "total": 3,
+    "implemented": 2,
     "items": [
       {
         "id": "REQ-1",
-        "summary": "Create a backend method to set and verify an admin password using secure hashing",
-        "status": "unknown",
-        "plannedFiles": [],
-        "matchedFiles": []
+        "summary": "Add Stripe payment processing integration to replace the current payment methods (Cash on Delivery and UPI). The payment flow should automatically confirm orders upon successful payment.",
+        "status": "implemented",
+        "plannedFiles": [
+          "frontend/src/hooks/useStripeCheckout.ts",
+          "frontend/src/components/PaymentSetup.tsx",
+          "frontend/src/pages/PaymentSuccessPage.tsx",
+          "frontend/src/pages/PaymentFailurePage.tsx",
+          "frontend/src/App.tsx"
+        ],
+        "matchedFiles": [
+          "frontend/src/components/PaymentSetup.tsx",
+          "frontend/src/pages/PaymentSuccessPage.tsx",
+          "frontend/src/pages/PaymentFailurePage.tsx",
+          "frontend/src/App.tsx"
+        ]
       },
       {
         "id": "REQ-2",
-        "summary": "Add admin login form on AdminPage with password input field",
+        "summary": "Update the PaymentPage.tsx to include Stripe as a payment method option alongside or replacing existing payment methods.",
         "status": "implemented",
         "plannedFiles": [
-          "frontend/src/pages/AdminPage.tsx",
+          "frontend/src/pages/PaymentPage.tsx",
           "frontend/src/hooks/useQueries.ts"
         ],
         "matchedFiles": [
-          "frontend/src/pages/AdminPage.tsx",
+          "frontend/src/pages/PaymentPage.tsx",
           "frontend/src/hooks/useQueries.ts"
         ]
       },
       {
         "id": "REQ-3",
-        "summary": "Protect the product upload form and category management features behind admin authentication",
-        "status": "implemented",
-        "plannedFiles": [
-          "frontend/src/pages/AdminPage.tsx",
-          "frontend/src/hooks/useAdminAuth.ts"
-        ],
-        "matchedFiles": [
-          "frontend/src/pages/AdminPage.tsx",
-          "frontend/src/hooks/useAdminAuth.ts"
-        ]
-      },
-      {
-        "id": "REQ-4",
-        "summary": "Add admin logout functionality",
-        "status": "implemented",
-        "plannedFiles": [
-          "frontend/src/pages/AdminPage.tsx",
-          "frontend/src/hooks/useAdminAuth.ts"
-        ],
-        "matchedFiles": [
-          "frontend/src/pages/AdminPage.tsx",
-          "frontend/src/hooks/useAdminAuth.ts"
-        ]
+        "summary": "Implement backend logic to handle Stripe payment webhooks and automatically confirm orders when payment is successful.",
+        "status": "unknown",
+        "plannedFiles": [],
+        "matchedFiles": []
       }
     ]
   },
   "changedFiles": [
+    "backend/authorization/MixinAuthorization.mo",
+    "backend/authorization/access-control.mo",
+    "backend/http-outcalls/outcall.mo",
     "backend/main.mo",
+    "backend/stripe/stripe.mo",
     "build-request.json",
+    "caffeine.lock.json",
     "feature_evidence.json",
     "frontend-file-summaries.txt",
     "frontend-implementation-plan.json",
-    "frontend/src/hooks/useAdminAuth.ts",
+    "frontend/src/App.tsx",
+    "frontend/src/backend.d.ts",
+    "frontend/src/backend.ts",
+    "frontend/src/components/PaymentSetup.tsx",
+    "frontend/src/declarations/backend.did.d.ts",
+    "frontend/src/declarations/backend.did.js",
+    "frontend/src/hooks/useActor.ts",
     "frontend/src/hooks/useQueries.ts",
-    "frontend/src/pages/AdminPage.tsx",
+    "frontend/src/pages/PaymentFailurePage.tsx",
+    "frontend/src/pages/PaymentPage.tsx",
+    "frontend/src/pages/PaymentSuccessPage.tsx",
+    "frontend/src/utils/urlParams.ts",
     "project_state.json",
     "scratch/component-selection.json",
     "spec.md",

@@ -1,68 +1,63 @@
 {
   "kind": "implementation_plan",
   "version": "1.0",
-  "title": "Add admin password authentication",
+  "title": "Integrate Stripe payment processing",
   "requirements": [
     {
-      "id": "REQ-2",
-      "summary": "Add admin login form on AdminPage with password input field",
+      "id": "REQ-1",
+      "summary": "Add Stripe payment processing integration to replace the current payment methods with automatic order confirmation upon successful payment",
       "acceptanceCriteria": [
-        "AdminPage displays a login form when user is not authenticated",
-        "Login form includes password input field and submit button",
-        "Form validates password is not empty before submission"
+        "Stripe payment option is available on the payment page",
+        "Users can complete payment through Stripe's secure checkout",
+        "Orders are automatically confirmed after successful Stripe payment",
+        "Payment confirmation updates the order status in the backend"
       ],
       "file_operations": [
         {
-          "path": "frontend/src/pages/AdminPage.tsx",
+          "path": "frontend/src/hooks/useStripeCheckout.ts",
+          "operation": "create",
+          "description": "Create a custom hook using useMutation from @tanstack/react-query that calls the backend's createStripeSession method. Use the stripe component to implement the checkout session hook. Parse the JSON result to extract the CheckoutSession with id and url properties. Validate that the parsed session includes a non-empty url before returning. Verify the stripe component's usage instructions before implementing."
+        },
+        {
+          "path": "frontend/src/components/PaymentSetup.tsx",
+          "operation": "create",
+          "description": "Use the stripe component to create a PaymentSetup component. This component checks if Stripe is configured using isStripeConfigured backend method. If not configured, display an admin panel that prompts the admin to initialize Stripe with StripeConfiguration including secret key and allowed countries array. Only show this setup interface if Stripe has not been configured yet. Verify the stripe component's usage instructions before implementing."
+        },
+        {
+          "path": "frontend/src/pages/PaymentSuccessPage.tsx",
+          "operation": "create",
+          "description": "Use the stripe component to create a PaymentSuccessPage component that displays a success message when payment is completed. Include navigation options to continue shopping or view orders. Verify the stripe component's usage instructions before implementing."
+        },
+        {
+          "path": "frontend/src/pages/PaymentFailurePage.tsx",
+          "operation": "create",
+          "description": "Use the stripe component to create a PaymentFailurePage component that displays an error message when payment fails or is cancelled. Include options to retry payment or return to cart. Verify the stripe component's usage instructions before implementing."
+        },
+        {
+          "path": "frontend/src/App.tsx",
           "operation": "modify",
-          "description": "Add admin login form component that displays when user is not authenticated. Include password input field with visibility toggle, submit button, and form validation to ensure password is not empty before submission. Wrap existing product upload form in authentication check to only show after successful login."
+          "description": "Register two new routes: path '/payment-success' pointing to PaymentSuccessPage and path '/payment-failure' pointing to PaymentFailurePage. Use @tanstack/router for route configuration. Ensure these routes are accessible without authentication guards since they are callback URLs from Stripe."
+        }
+      ]
+    },
+    {
+      "id": "REQ-2",
+      "summary": "Update the PaymentPage.tsx to include Stripe as a payment method option",
+      "acceptanceCriteria": [
+        "Payment page displays Stripe payment option",
+        "Payment method selection works correctly",
+        "UI clearly indicates secure payment processing"
+      ],
+      "file_operations": [
+        {
+          "path": "frontend/src/pages/PaymentPage.tsx",
+          "operation": "modify",
+          "description": "Use the stripe component to integrate Stripe payment. Replace the existing Cash on Delivery and UPI payment methods with Stripe. Import and use the useStripeCheckout hook. When the user confirms payment, call the hook with shopping items converted to the ShoppingItem format (including productName, productDescription, currency, priceInCents, and quantity). On successful session creation, validate that session.url exists and is non-empty. If valid, redirect to the Stripe checkout page using window.location.href = session.url (do not use router navigation). If session.url is missing, display an error message and do not redirect. Show a loading state during checkout session creation. Display clear messaging that payment is processed securely through Stripe. Verify the stripe component's usage instructions before implementing."
         },
         {
           "path": "frontend/src/hooks/useQueries.ts",
           "operation": "modify",
-          "description": "Add useAdminLogin mutation hook that calls the backend password verification method. Handle success/failure states and store authentication status in React state or session storage for persistence."
-        }
-      ]
-    },
-    {
-      "id": "REQ-3",
-      "summary": "Protect product upload and category management behind admin authentication",
-      "acceptanceCriteria": [
-        "Product upload form is only visible after successful admin login",
-        "Unauthenticated users see only the login form on AdminPage",
-        "Admin session persists across page refreshes"
-      ],
-      "file_operations": [
-        {
-          "path": "frontend/src/pages/AdminPage.tsx",
-          "operation": "modify",
-          "description": "Implement authentication state management using React state and session storage. Check authentication status on component mount and persist it across page refreshes. Conditionally render either the login form (when not authenticated) or the product upload form (when authenticated)."
-        },
-        {
-          "path": "frontend/src/hooks/useAdminAuth.ts",
-          "operation": "create",
-          "description": "Create custom hook to manage admin authentication state. Provide methods to check authentication status, store/retrieve session from sessionStorage, and expose isAuthenticated boolean and login/logout functions to consuming components."
-        }
-      ]
-    },
-    {
-      "id": "REQ-4",
-      "summary": "Add admin logout functionality",
-      "acceptanceCriteria": [
-        "Authenticated admin can log out from the AdminPage",
-        "Logout clears admin session and returns to login form",
-        "Logout button is visible only when admin is authenticated"
-      ],
-      "file_operations": [
-        {
-          "path": "frontend/src/pages/AdminPage.tsx",
-          "operation": "modify",
-          "description": "Add logout button that is visible only when admin is authenticated. Button should clear the admin session from state and sessionStorage, then return user to the login form view."
-        },
-        {
-          "path": "frontend/src/hooks/useAdminAuth.ts",
-          "operation": "modify",
-          "description": "Add logout method to the admin authentication hook that clears authentication state from both React state and sessionStorage, ensuring complete session cleanup."
+          "description": "Update the existing checkout mutation to support Stripe payments. Export a function or hook that converts cart items to the ShoppingItem array format required by the Stripe checkout session. Ensure the checkout flow integrates with the useStripeCheckout hook for Stripe-based payments."
         }
       ]
     }

@@ -1,6 +1,6 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { useActor } from './useActor';
-import type { Product, CartItem, PaymentMethod } from '../backend';
+import type { Product, CartItem, ShoppingItem, StripeConfiguration } from '../backend';
 
 // Query to search products (we'll use this for "get all" by passing empty string)
 export function useProducts(searchTerm: string = '') {
@@ -39,6 +39,20 @@ export function useCartTotal() {
     queryFn: async () => {
       if (!actor) return 0;
       return actor.calculateTotal();
+    },
+    enabled: !!actor && !isFetching,
+  });
+}
+
+// Query to check if Stripe is configured
+export function useIsStripeConfigured() {
+  const { actor, isFetching } = useActor();
+
+  return useQuery<boolean>({
+    queryKey: ['stripeConfigured'],
+    queryFn: async () => {
+      if (!actor) return false;
+      return actor.isStripeConfigured();
     },
     enabled: !!actor && !isFetching,
   });
@@ -108,20 +122,83 @@ export function useAddToCart() {
   });
 }
 
-// Mutation to checkout
-export function useCheckout() {
+// Mutation to update cart quantity
+export function useUpdateCartQuantity() {
   const { actor } = useActor();
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: async (paymentMethod: PaymentMethod) => {
+    mutationFn: async (data: { productId: bigint; newQuantity: bigint }) => {
       if (!actor) throw new Error('Actor not initialized');
-      return actor.checkout(paymentMethod);
+      return actor.updateCartQuantity(data.productId, data.newQuantity);
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['cart'] });
       queryClient.invalidateQueries({ queryKey: ['cartTotal'] });
     },
+  });
+}
+
+// Mutation to set Stripe configuration
+export function useSetStripeConfiguration() {
+  const { actor } = useActor();
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async (config: StripeConfiguration) => {
+      if (!actor) throw new Error('Actor not initialized');
+      return actor.setStripeConfiguration(config);
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['stripeConfigured'] });
+    },
+  });
+}
+
+// Checkout session type
+export type CheckoutSession = {
+  id: string;
+  url: string;
+};
+
+// Mutation to create Stripe checkout session
+export function useCreateCheckoutSession() {
+  const { actor } = useActor();
+
+  return useMutation({
+    mutationFn: async (items: ShoppingItem[]): Promise<CheckoutSession> => {
+      if (!actor) throw new Error('Actor not available');
+      const baseUrl = `${window.location.protocol}//${window.location.host}`;
+      const successUrl = `${baseUrl}/payment-success`;
+      const cancelUrl = `${baseUrl}/payment-failure`;
+      const result = await actor.createCheckoutSession(items, successUrl, cancelUrl);
+      // JSON parsing is important!
+      const session = JSON.parse(result) as CheckoutSession;
+      if (!session?.url) {
+        throw new Error('Stripe session missing url');
+      }
+      return session;
+    },
+  });
+}
+
+// Helper function to convert cart items to shopping items
+export function convertCartToShoppingItems(
+  cartItems: CartItem[],
+  products: Product[]
+): ShoppingItem[] {
+  return cartItems.map((cartItem) => {
+    const product = products.find((p) => p.id === cartItem.productId);
+    if (!product) {
+      throw new Error(`Product not found: ${cartItem.productId}`);
+    }
+    return {
+      currency: 'usd',
+      productName: product.name,
+      productDescription: product.description,
+      priceInCents: BigInt(Math.round(product.price * 100)),
+      quantity: cartItem.quantity,
+    };
   });
 }
 

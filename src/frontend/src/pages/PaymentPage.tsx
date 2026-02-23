@@ -1,44 +1,49 @@
 import { useState } from 'react';
 import { useNavigate } from '@tanstack/react-router';
-import { CreditCard, Banknote, Copy, Check } from 'lucide-react';
+import { CreditCard, Loader2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
-import { Label } from '@/components/ui/label';
 import { Separator } from '@/components/ui/separator';
-import { useCartTotal, useCheckout } from '../hooks/useQueries';
+import { Alert, AlertDescription } from '@/components/ui/alert';
+import { useCartTotal, useCart, useProducts, useCreateCheckoutSession, convertCartToShoppingItems } from '../hooks/useQueries';
 import { toast } from 'sonner';
-
-const UPI_ID = '9892246308-2@axl';
+import PaymentSetup from '../components/PaymentSetup';
 
 export default function PaymentPage() {
   const navigate = useNavigate();
   const { data: total = 0 } = useCartTotal();
-  const checkoutMutation = useCheckout();
-  const [paymentMethod, setPaymentMethod] = useState<'cod' | 'upi'>('cod');
-  const [copied, setCopied] = useState(false);
+  const { data: cartItems = [] } = useCart();
+  const { data: products = [] } = useProducts();
+  const createCheckoutSession = useCreateCheckoutSession();
+  const [isProcessing, setIsProcessing] = useState(false);
 
-  const handleCopyUPI = () => {
-    navigator.clipboard.writeText(UPI_ID);
-    setCopied(true);
-    toast.success('UPI ID copied to clipboard');
-    setTimeout(() => setCopied(false), 2000);
-  };
+  const handleStripePayment = async () => {
+    if (cartItems.length === 0) {
+      toast.error('Your cart is empty');
+      return;
+    }
 
-  const handleCompleteOrder = () => {
-    const method =
-      paymentMethod === 'cod'
-        ? { __kind__: 'cashOnDelivery' as const, cashOnDelivery: null }
-        : { __kind__: 'upi' as const, upi: UPI_ID };
+    setIsProcessing(true);
 
-    checkoutMutation.mutate(method, {
-      onSuccess: () => {
-        navigate({ to: '/order-success' });
-      },
-      onError: () => {
-        toast.error('Failed to complete order');
-      },
-    });
+    try {
+      // Convert cart items to shopping items
+      const shoppingItems = convertCartToShoppingItems(cartItems, products);
+
+      // Create checkout session
+      const session = await createCheckoutSession.mutateAsync(shoppingItems);
+
+      // Validate session URL
+      if (!session?.url) {
+        throw new Error('Stripe session missing url');
+      }
+
+      // Redirect to Stripe checkout
+      window.location.href = session.url;
+    } catch (error: any) {
+      setIsProcessing(false);
+      console.error('Stripe checkout error:', error);
+      toast.error(error.message || 'Failed to initiate payment. Please try again.');
+    }
   };
 
   return (
@@ -47,67 +52,61 @@ export default function PaymentPage() {
 
       <div className="grid gap-8 lg:grid-cols-3">
         {/* Payment Methods */}
-        <div className="lg:col-span-2">
+        <div className="lg:col-span-2 space-y-6">
+          <PaymentSetup />
+
           <Card>
             <CardHeader>
-              <CardTitle>Select Payment Method</CardTitle>
+              <CardTitle>Secure Payment with Stripe</CardTitle>
             </CardHeader>
             <CardContent>
-              <RadioGroup value={paymentMethod} onValueChange={(v) => setPaymentMethod(v as 'cod' | 'upi')}>
-                <div className="space-y-4">
-                  {/* Cash on Delivery */}
-                  <div className="flex items-start space-x-3 rounded-lg border border-border p-4 transition-colors hover:bg-muted/50">
-                    <RadioGroupItem value="cod" id="cod" className="mt-1" />
-                    <Label htmlFor="cod" className="flex-1 cursor-pointer">
-                      <div className="flex items-center gap-3 mb-2">
-                        <Banknote className="h-5 w-5 text-primary" />
-                        <span className="font-semibold">Cash on Delivery</span>
-                      </div>
-                      <p className="text-sm text-muted-foreground">
-                        Pay with cash when your order is delivered to your doorstep.
-                      </p>
-                    </Label>
-                  </div>
+              <Alert className="mb-6">
+                <CreditCard className="h-4 w-4" />
+                <AlertDescription>
+                  Your payment is processed securely through Stripe. We accept all major credit and debit cards.
+                </AlertDescription>
+              </Alert>
 
-                  {/* UPI Payment */}
-                  <div className="flex items-start space-x-3 rounded-lg border border-border p-4 transition-colors hover:bg-muted/50">
-                    <RadioGroupItem value="upi" id="upi" className="mt-1" />
-                    <Label htmlFor="upi" className="flex-1 cursor-pointer">
-                      <div className="flex items-center gap-3 mb-2">
-                        <CreditCard className="h-5 w-5 text-primary" />
-                        <span className="font-semibold">UPI Payment</span>
-                      </div>
-                      <p className="text-sm text-muted-foreground mb-3">
-                        Pay instantly using any UPI app like Google Pay, PhonePe, or Paytm.
+              <div className="space-y-4">
+                <div className="rounded-lg border border-border p-6 bg-muted/30">
+                  <div className="flex items-center gap-4 mb-4">
+                    <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-primary/10">
+                      <CreditCard className="h-6 w-6 text-primary" />
+                    </div>
+                    <div>
+                      <h3 className="font-semibold">Credit or Debit Card</h3>
+                      <p className="text-sm text-muted-foreground">
+                        Secure payment powered by Stripe
                       </p>
-                      {paymentMethod === 'upi' && (
-                        <div className="mt-4 rounded-lg bg-muted p-4">
-                          <p className="text-sm font-medium mb-2">UPI ID:</p>
-                          <div className="flex items-center gap-2">
-                            <code className="flex-1 rounded bg-background px-3 py-2 text-sm font-mono">
-                              {UPI_ID}
-                            </code>
-                            <Button
-                              variant="outline"
-                              size="icon"
-                              onClick={handleCopyUPI}
-                            >
-                              {copied ? (
-                                <Check className="h-4 w-4 text-green-600" />
-                              ) : (
-                                <Copy className="h-4 w-4" />
-                              )}
-                            </Button>
-                          </div>
-                          <p className="mt-3 text-xs text-muted-foreground">
-                            Please complete the payment and then click "Complete Order" below.
-                          </p>
-                        </div>
-                      )}
-                    </Label>
+                    </div>
+                  </div>
+                  
+                  <div className="space-y-2 text-sm text-muted-foreground">
+                    <p>✓ Secure SSL encryption</p>
+                    <p>✓ PCI DSS compliant</p>
+                    <p>✓ Instant payment confirmation</p>
                   </div>
                 </div>
-              </RadioGroup>
+
+                <Button
+                  className="w-full"
+                  size="lg"
+                  onClick={handleStripePayment}
+                  disabled={isProcessing || cartItems.length === 0}
+                >
+                  {isProcessing ? (
+                    <>
+                      <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                      Redirecting to Stripe...
+                    </>
+                  ) : (
+                    <>
+                      <CreditCard className="mr-2 h-4 w-4" />
+                      Proceed to Secure Payment
+                    </>
+                  )}
+                </Button>
+              </div>
             </CardContent>
           </Card>
         </div>
@@ -121,7 +120,7 @@ export default function PaymentPage() {
             <CardContent className="space-y-4">
               <div className="flex justify-between text-sm">
                 <span className="text-muted-foreground">Subtotal</span>
-                <span className="font-medium">₹{total.toFixed(2)}</span>
+                <span className="font-medium">${total.toFixed(2)}</span>
               </div>
               <div className="flex justify-between text-sm">
                 <span className="text-muted-foreground">Shipping</span>
@@ -129,25 +128,16 @@ export default function PaymentPage() {
               </div>
               <div className="flex justify-between text-sm">
                 <span className="text-muted-foreground">Payment Method</span>
-                <span className="font-medium">
-                  {paymentMethod === 'cod' ? 'Cash on Delivery' : 'UPI'}
-                </span>
+                <span className="font-medium">Stripe</span>
               </div>
               <Separator />
               <div className="flex justify-between text-lg font-bold">
                 <span>Total</span>
-                <span className="text-primary">₹{total.toFixed(2)}</span>
+                <span className="text-primary">${total.toFixed(2)}</span>
               </div>
-            </CardContent>
-            <CardContent className="pt-0">
-              <Button
-                className="w-full"
-                size="lg"
-                onClick={handleCompleteOrder}
-                disabled={checkoutMutation.isPending}
-              >
-                {checkoutMutation.isPending ? 'Processing...' : 'Complete Order'}
-              </Button>
+              <p className="text-xs text-muted-foreground text-center">
+                You will be redirected to Stripe's secure checkout
+              </p>
             </CardContent>
           </Card>
         </div>

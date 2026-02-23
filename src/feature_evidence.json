@@ -2,59 +2,48 @@
   "kind": "feature_evidence_report",
   "features": [
     {
-      "featureId": "feature-add-admin-login-form-on-adminpage-with-password-input-field",
-      "featureTitle": "Add admin login form on AdminPage with password input field",
+      "featureId": "feature-add-stripe-payment-processing-integration-to-replace-the-current-payment-methods-cash-on-delivery-and-upi-the-payment-flow-should-automatically-confirm-orders-upon-successful-payment",
+      "featureTitle": "Add Stripe payment processing integration to replace the current payment methods (Cash on Delivery and UPI). The payment flow should automatically confirm orders upon successful payment.",
       "files": [
-        "frontend/src/hooks/useQueries.ts",
-        "frontend/src/pages/AdminPage.tsx"
+        "frontend/src/App.tsx",
+        "frontend/src/components/PaymentSetup.tsx",
+        "frontend/src/pages/PaymentFailurePage.tsx",
+        "frontend/src/pages/PaymentSuccessPage.tsx"
       ],
       "components": [
         "core-infrastructure@1.0.2",
         "shadcn-ui@1.0.0",
         "build-template-react@1.0.0",
         "initial-app@1.0.0",
-        "github-export-icp-cli@1.0.0"
+        "github-export-icp-cli@1.0.0",
+        "stripe@3.0.0",
+        "http-outcalls@3.0.0",
+        "authorization@4.0.0"
+      ],
+      "testIds": [
+        "REQ-1"
+      ],
+      "confidence": "high"
+    },
+    {
+      "featureId": "feature-update-the-paymentpage-tsx-to-include-stripe-as-a-payment-method-option-alongside-or-replacing-existing-payment-methods",
+      "featureTitle": "Update the PaymentPage.tsx to include Stripe as a payment method option alongside or replacing existing payment methods.",
+      "files": [
+        "frontend/src/hooks/useQueries.ts",
+        "frontend/src/pages/PaymentPage.tsx"
+      ],
+      "components": [
+        "core-infrastructure@1.0.2",
+        "shadcn-ui@1.0.0",
+        "build-template-react@1.0.0",
+        "initial-app@1.0.0",
+        "github-export-icp-cli@1.0.0",
+        "stripe@3.0.0",
+        "http-outcalls@3.0.0",
+        "authorization@4.0.0"
       ],
       "testIds": [
         "REQ-2"
-      ],
-      "confidence": "high"
-    },
-    {
-      "featureId": "feature-protect-the-product-upload-form-and-category-management-features-behind-admin-authentication",
-      "featureTitle": "Protect the product upload form and category management features behind admin authentication",
-      "files": [
-        "frontend/src/hooks/useAdminAuth.ts",
-        "frontend/src/pages/AdminPage.tsx"
-      ],
-      "components": [
-        "core-infrastructure@1.0.2",
-        "shadcn-ui@1.0.0",
-        "build-template-react@1.0.0",
-        "initial-app@1.0.0",
-        "github-export-icp-cli@1.0.0"
-      ],
-      "testIds": [
-        "REQ-3"
-      ],
-      "confidence": "high"
-    },
-    {
-      "featureId": "feature-add-admin-logout-functionality",
-      "featureTitle": "Add admin logout functionality",
-      "files": [
-        "frontend/src/hooks/useAdminAuth.ts",
-        "frontend/src/pages/AdminPage.tsx"
-      ],
-      "components": [
-        "core-infrastructure@1.0.2",
-        "shadcn-ui@1.0.0",
-        "build-template-react@1.0.0",
-        "initial-app@1.0.0",
-        "github-export-icp-cli@1.0.0"
-      ],
-      "testIds": [
-        "REQ-4"
       ],
       "confidence": "high"
     }

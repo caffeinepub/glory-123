@@ -1,15 +1,18 @@
 {
-  "frontend/src/App.tsx": "Main application component with TanStack Router setup, defining all routes (home, product detail, cart, payment, order success, admin) with a shared layout including Header and Footer.",
-  "frontend/src/hooks/useQueries.ts": "React Query hooks for all backend operations including product management, cart operations, checkout, and admin login with temporary client-side password verification (to be replaced with backend verification).",
+  "frontend/src/App.tsx": "Main application component with TanStack Router setup, defining all routes including new Stripe payment callback routes (/payment-success and /payment-failure) with a shared layout including Header and Footer.",
+  "frontend/src/hooks/useQueries.ts": "React Query hooks for all backend operations including product management, cart operations, Stripe configuration, checkout session creation with JSON parsing, and helper function to convert cart items to ShoppingItem format.",
   "frontend/src/components/Header.tsx": "Sticky navigation header with GLORY 123 branding, navigation links to Products and Admin pages, and a shopping cart icon with item count badge.",
   "frontend/src/components/Footer.tsx": "Footer component displaying contact information (phone: 9892246308, address: R.N.15 DHARAVI MUMBAI), social media links, and Caffeine.ai attribution with UTM tracking.",
   "frontend/src/pages/ProductListPage.tsx": "Main product listing page with hero banner, search functionality, category filtering, and responsive product grid displaying products with uploaded images or placeholder fallbacks.",
   "frontend/src/pages/ProductDetailPage.tsx": "Product detail page showing full product information with large uploaded image or placeholder fallback, add-to-cart functionality, and customer reviews section with submission capability.",
-  "frontend/src/pages/CartPage.tsx": "Shopping cart page displaying cart items with product thumbnail images (uploaded or placeholder), quantity adjustment controls, and order summary with proceed-to-payment button.",
-  "frontend/src/pages/PaymentPage.tsx": "Payment page offering Cash on Delivery and UPI payment options, displaying UPI ID (9892246308-2@axl) with copy functionality, and order summary.",
+  "frontend/src/pages/CartPage.tsx": "Shopping cart page displaying cart items with product thumbnail images, quantity adjustment controls using the updateCartQuantity mutation for both increase and decrease operations, and order summary with proceed-to-payment button.",
+  "frontend/src/pages/PaymentPage.tsx": "Payment page with Stripe integration that displays PaymentSetup component, converts cart items to shopping items, creates Stripe checkout session, and redirects to Stripe's secure checkout using window.location.href.",
   "frontend/src/pages/OrderSuccessPage.tsx": "Order confirmation page displayed after successful checkout with success message and navigation options to continue shopping or view cart.",
   "frontend/src/pages/AdminPage.tsx": "Admin panel with password-protected access featuring a login form with password visibility toggle, product upload form with image support, and logout functionality that conditionally renders based on authentication state.",
   "frontend/src/index.css": "Global styles with OKLCH-based yellow theme color system for both light and dark modes, featuring rich gold/yellow primary colors and Apple-inspired typography with tight letter spacing.",
   "frontend/tailwind.config.js": "Tailwind configuration with yellow theme colors, Apple-inspired SF Pro Display font stack, custom letter spacing, and soft shadows for minimalist design aesthetic.",
-  "frontend/src/hooks/useAdminAuth.ts": "Custom hook for managing admin authentication state with session persistence using sessionStorage, providing login, logout, and authentication status checking functionality."
+  "frontend/src/hooks/useAdminAuth.ts": "Custom hook for managing admin authentication state with session persistence using sessionStorage, providing login, logout, and authentication status checking functionality.",
+  "frontend/src/components/PaymentSetup.tsx": "Admin component that checks if Stripe is configured and displays a setup form for entering Stripe secret key and allowed countries if not yet configured.",
+  "frontend/src/pages/PaymentSuccessPage.tsx": "Success page displayed after successful Stripe payment with confirmation message, order details, and navigation options to continue shopping or view cart.",
+  "frontend/src/pages/PaymentFailurePage.tsx": "Failure page displayed when Stripe payment fails or is cancelled with error explanation, troubleshooting tips, and options to retry payment or return to cart."
 }

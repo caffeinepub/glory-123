@@ -1,9 +1,9 @@
 import { useNavigate } from '@tanstack/react-router';
-import { ShoppingBag, Trash2, Plus, Minus } from 'lucide-react';
+import { ShoppingBag, Plus, Minus } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Separator } from '@/components/ui/separator';
-import { useCart, useCartTotal, useProducts, useAddToCart } from '../hooks/useQueries';
+import { useCart, useCartTotal, useProducts, useUpdateCartQuantity } from '../hooks/useQueries';
 import { Skeleton } from '@/components/ui/skeleton';
 
 export default function CartPage() {
@@ -11,7 +11,7 @@ export default function CartPage() {
   const { data: cartItems = [], isLoading: cartLoading } = useCart();
   const { data: total = 0, isLoading: totalLoading } = useCartTotal();
   const { data: products = [] } = useProducts('');
-  const addToCartMutation = useAddToCart();
+  const updateCartQuantityMutation = useUpdateCartQuantity();
 
   const cartWithProducts = cartItems.map((item) => {
     const product = products.find((p) => p.id === item.productId);
@@ -20,7 +20,7 @@ export default function CartPage() {
 
   const handleQuantityChange = (productId: bigint, newQuantity: number) => {
     if (newQuantity < 1) return;
-    addToCartMutation.mutate({ productId, quantity: BigInt(newQuantity) });
+    updateCartQuantityMutation.mutate({ productId, newQuantity: BigInt(newQuantity) });
   };
 
   // Get product image - use uploaded image if available, otherwise fallback to placeholder
@@ -98,7 +98,7 @@ export default function CartPage() {
                           onClick={() =>
                             handleQuantityChange(item.productId, Number(item.quantity) - 1)
                           }
-                          disabled={Number(item.quantity) <= 1}
+                          disabled={Number(item.quantity) <= 1 || updateCartQuantityMutation.isPending}
                         >
                           <Minus className="h-3 w-3" />
                         </Button>
@@ -112,6 +112,7 @@ export default function CartPage() {
                           onClick={() =>
                             handleQuantityChange(item.productId, Number(item.quantity) + 1)
                           }
+                          disabled={updateCartQuantityMutation.isPending}
                         >
                           <Plus className="h-3 w-3" />
                         </Button>

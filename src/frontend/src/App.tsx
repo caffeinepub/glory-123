@@ -4,6 +4,8 @@ import ProductDetailPage from './pages/ProductDetailPage';
 import CartPage from './pages/CartPage';
 import PaymentPage from './pages/PaymentPage';
 import OrderSuccessPage from './pages/OrderSuccessPage';
+import PaymentSuccessPage from './pages/PaymentSuccessPage';
+import PaymentFailurePage from './pages/PaymentFailurePage';
 import AdminPage from './pages/AdminPage';
 import Header from './components/Header';
 import Footer from './components/Footer';
@@ -56,6 +58,18 @@ const orderSuccessRoute = createRoute({
   component: OrderSuccessPage,
 });
 
+const paymentSuccessRoute = createRoute({
+  getParentRoute: () => rootRoute,
+  path: '/payment-success',
+  component: PaymentSuccessPage,
+});
+
+const paymentFailureRoute = createRoute({
+  getParentRoute: () => rootRoute,
+  path: '/payment-failure',
+  component: PaymentFailurePage,
+});
+
 const adminRoute = createRoute({
   getParentRoute: () => rootRoute,
   path: '/admin',
@@ -68,6 +82,8 @@ const routeTree = rootRoute.addChildren([
   cartRoute,
   paymentRoute,
   orderSuccessRoute,
+  paymentSuccessRoute,
+  paymentFailureRoute,
   adminRoute,
 ]);
 
