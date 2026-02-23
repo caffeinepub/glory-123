@@ -36,6 +36,14 @@ export default function ProductListPage() {
     return images[index % images.length];
   };
 
+  // Get image source for product
+  const getProductImageSrc = (product: typeof products[0], index: number) => {
+    if (product.imageData) {
+      return `data:image/png;base64,${product.imageData}`;
+    }
+    return getProductImage(index);
+  };
+
   return (
     <div className="min-h-screen bg-background">
       {/* Hero Section */}
@@ -118,7 +126,7 @@ export default function ProductListPage() {
               >
                 <div className="aspect-square overflow-hidden bg-muted">
                   <img
-                    src={getProductImage(index)}
+                    src={getProductImageSrc(product, index)}
                     alt={product.name}
                     className="h-full w-full object-cover transition-transform group-hover:scale-105"
                   />

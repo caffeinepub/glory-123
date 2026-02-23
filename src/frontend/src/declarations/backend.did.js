@@ -15,6 +15,7 @@ export const PaymentMethod = IDL.Variant({
 export const Product = IDL.Record({
   'id' : IDL.Nat,
   'reviews' : IDL.Vec(IDL.Text),
+  'imageData' : IDL.Opt(IDL.Text),
   'name' : IDL.Text,
   'description' : IDL.Text,
   'category' : IDL.Text,
@@ -36,6 +37,7 @@ export const idlService = IDL.Service({
   'calculateTotal' : IDL.Func([], [IDL.Float64], ['query']),
   'checkout' : IDL.Func([PaymentMethod], [IDL.Text], []),
   'searchProducts' : IDL.Func([IDL.Text], [IDL.Vec(Product)], ['query']),
+  'uploadProductImage' : IDL.Func([IDL.Nat, IDL.Text], [], []),
   'viewCart' : IDL.Func([], [IDL.Vec(CartItem)], ['query']),
 });
 
@@ -49,6 +51,7 @@ export const idlFactory = ({ IDL }) => {
   const Product = IDL.Record({
     'id' : IDL.Nat,
     'reviews' : IDL.Vec(IDL.Text),
+    'imageData' : IDL.Opt(IDL.Text),
     'name' : IDL.Text,
     'description' : IDL.Text,
     'category' : IDL.Text,
@@ -67,6 +70,7 @@ export const idlFactory = ({ IDL }) => {
     'calculateTotal' : IDL.Func([], [IDL.Float64], ['query']),
     'checkout' : IDL.Func([PaymentMethod], [IDL.Text], []),
     'searchProducts' : IDL.Func([IDL.Text], [IDL.Vec(Product)], ['query']),
+    'uploadProductImage' : IDL.Func([IDL.Nat, IDL.Text], [], []),
     'viewCart' : IDL.Func([], [IDL.Vec(CartItem)], ['query']),
   });
 };

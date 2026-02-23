@@ -50,9 +50,24 @@ export function useAddProduct() {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: async (data: { name: string; category: string; price: number; description: string }) => {
+    mutationFn: async (data: { 
+      name: string; 
+      category: string; 
+      price: number; 
+      description: string;
+      imageData?: string;
+    }) => {
       if (!actor) throw new Error('Actor not initialized');
-      return actor.addProduct(data.name, data.category, data.price, data.description);
+      
+      // First, add the product
+      const productId = await actor.addProduct(data.name, data.category, data.price, data.description);
+      
+      // If imageData is provided, upload it
+      if (data.imageData) {
+        await actor.uploadProductImage(productId, data.imageData);
+      }
+      
+      return productId;
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['products'] });
@@ -106,6 +121,31 @@ export function useCheckout() {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['cart'] });
       queryClient.invalidateQueries({ queryKey: ['cartTotal'] });
+    },
+  });
+}
+
+// Mutation to verify admin password
+export function useAdminLogin() {
+  const { actor } = useActor();
+
+  return useMutation({
+    mutationFn: async (password: string) => {
+      if (!actor) throw new Error('Actor not initialized');
+      
+      // TODO: Replace with actual backend call when implemented
+      // For now, using a temporary client-side check
+      // This should be: return actor.verifyAdminPassword(password);
+      
+      // Temporary hardcoded password check (INSECURE - for demo only)
+      // In production, this MUST be replaced with backend verification
+      const isValid = password === 'admin123';
+      
+      if (!isValid) {
+        throw new Error('Invalid password');
+      }
+      
+      return isValid;
     },
   });
 }

@@ -1,173 +1,93 @@
 {
   "kind": "build_request",
-  "title": "Build GLORY 123 e-commerce website with product management, cart, and payment",
+  "title": "Add admin password authentication",
   "projectName": "GLORY 123",
   "priority": "normal",
   "requirements": [
     {
       "id": "REQ-1",
-      "text": "Implement a yellow color theme throughout the website with a classic, minimalist design inspired by Apple's aesthetic (clean typography, generous whitespace, high-quality product imagery layout)",
-      "target": "frontend",
+      "text": "Create a backend method to set and verify an admin password using secure hashing",
+      "target": "backend",
       "source": {
         "messageIds": [
-          "msg-1"
+          "msg-user-latest"
         ],
         "quotes": [
-          "theme colour should be yellow make the website well detailed and classic like apple website"
+          "adding admin login authentication with a password"
         ]
       },
       "acceptanceCriteria": [
-        "Primary color scheme uses yellow as the dominant theme color",
-        "Design features clean typography and generous whitespace",
-        "Layout is minimalist and visually polished"
+        "Backend stores a hashed admin password",
+        "Backend provides a method to verify password on login attempts",
+        "Password verification returns success/failure status"
       ]
     },
     {
       "id": "REQ-2",
-      "text": "Create backend data model and CRUD operations for products with fields: name, category, price, description, and support for multiple customer reviews per product",
-      "target": "backend",
+      "text": "Add admin login form on AdminPage with password input field",
+      "target": "frontend",
       "source": {
         "messageIds": [
-          "msg-1"
+          "msg-user-latest"
         ],
         "quotes": [
-          "I can add product and make categories and set price of the product and write discription also with a customer review down"
+          "adding admin login authentication with a password"
         ]
       },
       "acceptanceCriteria": [
-        "Products can be created with name, category, price, and description",
-        "Products support multiple customer reviews",
-        "CRUD operations (create, read, update, delete) work for products"
+        "AdminPage displays a login form when user is not authenticated",
+        "Login form includes password input field and submit button",
+        "Form validates password is not empty before submission"
       ]
     },
     {
       "id": "REQ-3",
-      "text": "Build an admin interface to add products, assign them to categories, set prices, and write descriptions",
+      "text": "Protect the product upload form and category management features behind admin authentication",
       "target": "frontend",
       "source": {
         "messageIds": [
-          "msg-1"
+          "msg-user-latest"
         ],
         "quotes": [
-          "I can add product and make categories and set price of the product and write discription"
+          "so only I can upload products and edit categories no other user"
         ]
       },
       "acceptanceCriteria": [
-        "Admin can create new products via a form",
-        "Form includes fields for name, category, price, and description",
-        "Products are successfully stored in the backend"
+        "Product upload form is only visible after successful admin login",
+        "Unauthenticated users see only the login form on AdminPage",
+        "Admin session persists across page refreshes"
       ]
     },
     {
       "id": "REQ-4",
-      "text": "Display products on the main page with category filtering and show customer reviews below each product detail view",
+      "text": "Add admin logout functionality",
       "target": "frontend",
       "source": {
         "messageIds": [
-          "msg-1"
-        ],
-        "quotes": [
-          "with a customer review down"
+          "msg-user-latest"
         ]
       },
       "acceptanceCriteria": [
-        "Products are displayed on the main page",
-        "Users can filter products by category",
-        "Product detail view shows customer reviews below product information"
-      ]
-    },
-    {
-      "id": "REQ-5",
-      "text": "Implement a shopping cart page where users can view selected products, adjust quantities, and see the total price",
-      "target": "both",
-      "source": {
-        "messageIds": [
-          "msg-1"
-        ],
-        "quotes": [
-          "Make the Cart page"
-        ]
-      },
-      "acceptanceCriteria": [
-        "Cart page displays all items added to cart",
-        "Users can adjust item quantities in cart",
-        "Total price updates dynamically based on cart contents"
-      ]
-    },
-    {
-      "id": "REQ-6",
-      "text": "Create a payment page with two payment options: Cash on Delivery and UPI, where UPI payments are directed to UPI ID 9892246308-2@axl",
-      "target": "both",
-      "source": {
-        "messageIds": [
-          "msg-1"
-        ],
-        "quotes": [
-          "In the payment page add option of CASH ON DELIVERY and UPI",
-          "receive all the payments done by the customer should receive on this UPI id 9892246308-2@axl"
-        ]
-      },
-      "acceptanceCriteria": [
-        "Payment page offers Cash on Delivery option",
-        "Payment page offers UPI payment option",
-        "UPI payments display or use UPI ID 9892246308-2@axl",
-        "Order submission captures payment method choice"
-      ]
-    },
-    {
-      "id": "REQ-7",
-      "text": "Add a product search functionality that allows users to search for products by name or description",
-      "target": "both",
-      "source": {
-        "messageIds": [
-          "msg-1"
-        ],
-        "quotes": [
-          "Add option to search for product"
-        ]
-      },
-      "acceptanceCriteria": [
-        "Search bar is visible on the main product listing page",
-        "Search filters products by name or description",
-        "Search results update dynamically as user types or submits query"
-      ]
-    },
-    {
-      "id": "REQ-8",
-      "text": "Display contact information in the website footer with phone number 9892246308 and address R.N.15 DHARAVI MUMBAI",
-      "target": "frontend",
-      "source": {
-        "messageIds": [
-          "msg-1"
-        ],
-        "quotes": [
-          "Make a contact information in the bottom of the website '9892246308' contact number and 'R.N.15 DHARAVI MUMBAI' address"
-        ]
-      },
-      "acceptanceCriteria": [
-        "Footer is visible on all pages",
-        "Footer displays phone number: 9892246308",
-        "Footer displays address: R.N.15 DHARAVI MUMBAI"
+        "Authenticated admin can log out from the AdminPage",
+        "Logout clears admin session and returns to login form",
+        "Logout button is visible only when admin is authenticated"
       ]
     }
   ],
   "constraints": [
-    "Use yellow as the primary theme color throughout the website",
-    "UPI payment ID must be exactly 9892246308-2@axl",
-    "Contact phone number must be 9892246308",
-    "Contact address must be R.N.15 DHARAVI MUMBAI"
+    "Do not change existing product upload or cart functionality",
+    "Maintain compatibility with existing Product and Cart data structures",
+    "Keep the single-actor backend architecture"
   ],
   "nonGoals": [
-    "Integration with actual payment gateways or real-time UPI processing",
-    "User authentication or customer account management",
-    "Order tracking or fulfillment systems",
-    "Email notifications for orders"
+    "Payment page with bank connection",
+    "Order tracking system",
+    "Unique order codes",
+    "Analytics dashboard",
+    "Multi-user admin system with different permission levels"
   ],
   "imageRequirements": {
-    "required": [
-      "Hero banner image for e-commerce homepage with elegant yellow-themed product showcase (hero-banner.dim_1920x600.png)",
-      "Placeholder product images with yellow accents for sample catalog items (product-placeholder-1.dim_400x400.png, product-placeholder-2.dim_400x400.png, product-placeholder-3.dim_400x400.png)"
-    ],
+    "required": [],
     "edits": []
   }
 }

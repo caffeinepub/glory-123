@@ -7,6 +7,8 @@ import List "mo:core/List";
 import Principal "mo:core/Principal";
 import Runtime "mo:core/Runtime";
 
+import Nat "mo:core/Nat";
+
 actor {
   type Product = {
     id : Nat;
@@ -15,6 +17,7 @@ actor {
     price : Float;
     description : Text;
     reviews : [Text];
+    imageData : ?Text;
   };
 
   module Product {
@@ -45,6 +48,7 @@ actor {
       price;
       description;
       reviews = [];
+      imageData = null;
     };
     productsMap.add(nextProductId, product);
     nextProductId += 1;
@@ -56,8 +60,7 @@ actor {
       case (null) { Runtime.trap("Product not found") };
       case (?product) {
         let updatedProduct = {
-          product with
-          reviews = product.reviews.concat([review]);
+          product with reviews = product.reviews.concat([review]);
         };
         productsMap.add(productId, updatedProduct);
       };
@@ -103,6 +106,18 @@ actor {
       case (#cashOnDelivery) { "Order placed with Cash on Delivery" };
       case (#upi(upiId)) {
         "Order placed with UPI payment to " # upiId;
+      };
+    };
+  };
+
+  public shared ({ caller }) func uploadProductImage(productId : Nat, imageData : Text) : async () {
+    switch (productsMap.get(productId)) {
+      case (null) { Runtime.trap("Product not found") };
+      case (?product) {
+        let updatedProduct = {
+          product with imageData = ?imageData;
+        };
+        productsMap.add(productId, updatedProduct);
       };
     };
   };

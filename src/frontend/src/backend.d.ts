@@ -21,6 +21,7 @@ export type PaymentMethod = {
 export interface Product {
     id: bigint;
     reviews: Array<string>;
+    imageData?: string;
     name: string;
     description: string;
     category: string;
@@ -33,5 +34,6 @@ export interface backendInterface {
     calculateTotal(): Promise<number>;
     checkout(paymentMethod: PaymentMethod): Promise<string>;
     searchProducts(searchTerm: string): Promise<Array<Product>>;
+    uploadProductImage(productId: bigint, imageData: string): Promise<void>;
     viewCart(): Promise<Array<CartItem>>;
 }

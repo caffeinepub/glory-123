@@ -16,6 +16,7 @@ export type PaymentMethod = { 'upi' : string } |
 export interface Product {
   'id' : bigint,
   'reviews' : Array<string>,
+  'imageData' : [] | [string],
   'name' : string,
   'description' : string,
   'category' : string,
@@ -28,6 +29,7 @@ export interface _SERVICE {
   'calculateTotal' : ActorMethod<[], number>,
   'checkout' : ActorMethod<[PaymentMethod], string>,
   'searchProducts' : ActorMethod<[string], Array<Product>>,
+  'uploadProductImage' : ActorMethod<[bigint, string], undefined>,
   'viewCart' : ActorMethod<[], Array<CartItem>>,
 }
 export declare const idlService: IDL.ServiceClass;

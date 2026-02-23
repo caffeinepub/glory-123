@@ -61,7 +61,10 @@ export default function ProductDetailPage() {
     );
   }
 
-  const productImage = `/assets/generated/product-placeholder-${(Number(product.id) % 3) + 1}.dim_400x400.png`;
+  // Get product image - use uploaded image if available, otherwise fallback to placeholder
+  const productImageSrc = product.imageData 
+    ? `data:image/png;base64,${product.imageData}`
+    : `/assets/generated/product-placeholder-${(Number(product.id) % 3) + 1}.dim_400x400.png`;
 
   return (
     <div className="container mx-auto px-4 py-8 sm:px-6 lg:px-8">
@@ -78,7 +81,7 @@ export default function ProductDetailPage() {
         {/* Product Image */}
         <div className="aspect-square overflow-hidden rounded-lg bg-muted">
           <img
-            src={productImage}
+            src={productImageSrc}
             alt={product.name}
             className="h-full w-full object-cover"
           />
@@ -138,10 +141,9 @@ export default function ProductDetailPage() {
                 <Textarea
                   id="review"
                   placeholder="Share your thoughts about this product..."
+                  rows={4}
                   value={reviewText}
                   onChange={(e) => setReviewText(e.target.value)}
-                  rows={4}
-                  className="mt-2"
                 />
               </div>
               <Button
@@ -155,27 +157,17 @@ export default function ProductDetailPage() {
         </Card>
 
         {/* Reviews List */}
-        {product.reviews.length === 0 ? (
-          <p className="text-center text-muted-foreground py-8">
-            No reviews yet. Be the first to review this product!
-          </p>
-        ) : (
+        {product.reviews.length > 0 ? (
           <div className="space-y-4">
             {product.reviews.map((review, index) => (
               <Card key={index}>
-                <CardContent className="pt-6">
-                  <div className="flex items-start gap-4">
-                    <div className="flex h-10 w-10 items-center justify-center rounded-full bg-primary text-primary-foreground font-semibold">
-                      {index + 1}
+                <CardContent className="p-4">
+                  <div className="flex items-start gap-3">
+                    <div className="flex h-10 w-10 items-center justify-center rounded-full bg-primary/10">
+                      <Star className="h-5 w-5 text-primary" />
                     </div>
                     <div className="flex-1">
-                      <div className="flex items-center gap-2 mb-2">
-                        <div className="flex">
-                          {[...Array(5)].map((_, i) => (
-                            <Star key={i} className="h-4 w-4 fill-primary text-primary" />
-                          ))}
-                        </div>
-                      </div>
+                      <p className="text-sm text-muted-foreground mb-1">Customer Review</p>
                       <p className="text-sm leading-relaxed">{review}</p>
                     </div>
                   </div>
@@ -183,6 +175,10 @@ export default function ProductDetailPage() {
               </Card>
             ))}
           </div>
+        ) : (
+          <p className="text-center text-muted-foreground py-8">
+            No reviews yet. Be the first to review this product!
+          </p>
         )}
       </section>
     </div>

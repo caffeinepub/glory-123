@@ -23,8 +23,12 @@ export default function CartPage() {
     addToCartMutation.mutate({ productId, quantity: BigInt(newQuantity) });
   };
 
-  const getProductImage = (id: bigint) => {
-    return `/assets/generated/product-placeholder-${(Number(id) % 3) + 1}.dim_400x400.png`;
+  // Get product image - use uploaded image if available, otherwise fallback to placeholder
+  const getProductImageSrc = (productId: bigint, product?: typeof products[0]) => {
+    if (product?.imageData) {
+      return `data:image/png;base64,${product.imageData}`;
+    }
+    return `/assets/generated/product-placeholder-${(Number(productId) % 3) + 1}.dim_400x400.png`;
   };
 
   if (cartLoading || totalLoading) {
@@ -72,12 +76,12 @@ export default function CartPage() {
                 <CardContent className="p-4">
                   <div className="flex gap-4">
                     <img
-                      src={getProductImage(item.productId)}
+                      src={getProductImageSrc(item.productId, item.product)}
                       alt={item.product.name}
-                      className="h-24 w-24 rounded-lg object-cover bg-muted"
+                      className="h-20 w-20 rounded-lg object-cover bg-muted flex-shrink-0"
                     />
-                    <div className="flex-1">
-                      <h3 className="font-semibold mb-1">{item.product.name}</h3>
+                    <div className="flex-1 min-w-0">
+                      <h3 className="font-semibold mb-1 truncate">{item.product.name}</h3>
                       <p className="text-sm text-muted-foreground mb-2">
                         {item.product.category}
                       </p>
