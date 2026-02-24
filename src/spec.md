@@ -1,11 +1,11 @@
 # Specification
 
 ## Summary
-**Goal:** Fix the deployment error from Version 5 to successfully deploy the Stripe payment integration to production.
+**Goal:** Fix deployment error preventing Version 6 from launching to production and verify Stripe payment integration works in production environment.
 
 **Planned changes:**
-- Diagnose and resolve the backend actor compilation/initialization error that prevented Version 5 deployment
-- Ensure Stripe payment integration deploys correctly to the production network
-- Verify all payment features remain functional after deployment
+- Diagnose and resolve the deployment error blocking production launch
+- Verify Stripe payment integration functions correctly after deployment
+- Ensure all existing features remain operational post-deployment
 
-**User-visible outcome:** The application successfully deploys to production with all Stripe payment features working correctly, allowing users to complete purchases without interruption.
+**User-visible outcome:** The application successfully deploys to production with all features (products, cart, Stripe payments, admin) working correctly.

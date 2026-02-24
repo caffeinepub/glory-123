@@ -1,46 +1,46 @@
 {
   "kind": "implementation_plan",
   "version": "1.0",
-  "title": "Fix Version 5 Deployment Error - Stripe Integration",
+  "title": "Fix Deployment Error and Verify Stripe Integration",
   "requirements": [
     {
-      "id": "REQ-1",
-      "summary": "Diagnose and resolve the deployment error that occurred during Version 5 production launch, ensuring the Stripe payment integration deploys successfully",
+      "id": "REQ-2",
+      "summary": "Verify that the Stripe payment integration works correctly in the production environment after deployment",
       "acceptanceCriteria": [
-        "Version 5 deploys successfully to production without errors",
-        "All Stripe payment integration features remain functional after deployment",
-        "Backend actor compiles and initializes correctly on the network"
+        "Users can initiate checkout sessions in production",
+        "Stripe redirect URLs function correctly",
+        "Payment success and failure callbacks work as expected"
       ],
       "file_operations": [
         {
           "path": "frontend/src/hooks/useQueries.ts",
           "operation": "modify",
-          "description": "Review and fix the createCheckoutSession mutation to ensure proper JSON parsing and validation of the Stripe session response. Verify that the mutation correctly parses the backend response as CheckoutSession type with id and url fields, and throws an error if the url is missing. Add explicit error handling for malformed responses that may cause deployment issues."
+          "description": "Review and verify the createCheckoutSession mutation to ensure proper JSON parsing of backend response, validation of session.url existence, and error handling. The mutation must validate that the parsed session includes a non-empty url before allowing redirect. Add explicit error handling if session.url is missing to prevent navigation to '/undefined'. Verify the component's usage instructions from the stripe component before implementing."
         },
         {
           "path": "frontend/src/pages/PaymentPage.tsx",
           "operation": "modify",
-          "description": "Review and fix the checkout flow to ensure proper validation before redirecting to Stripe. Verify that the component validates session.url exists before using window.location.href, never navigates to '/undefined', and shows appropriate error messages if the session is invalid. Ensure the component follows the Stripe component usage instructions exactly as specified."
+          "description": "Verify that the payment page correctly uses window.location.href for Stripe URL redirection (not router navigation), validates that session.url exists before redirecting, and displays appropriate error messages if the checkout session creation fails or returns an invalid URL. Ensure no navigation to '/undefined' occurs. The page must check 'if (!session?.url) throw new Error' before any redirect attempt. Verify the component's usage instructions from the stripe component before implementing."
         },
         {
           "path": "frontend/src/pages/PaymentSuccessPage.tsx",
           "operation": "modify",
-          "description": "Review the payment success page implementation to ensure it properly handles the Stripe callback flow and invalidates cart queries correctly. Verify that the component is wired into the router at path '/payment-success' and handles all success scenarios without causing runtime errors during deployment."
+          "description": "Review the payment success page to ensure it properly handles the Stripe redirect callback from production URLs, invalidates cart queries correctly, and displays appropriate success messaging. Verify that the route registration at '/payment-success' is functioning correctly in the production environment."
         },
         {
           "path": "frontend/src/pages/PaymentFailurePage.tsx",
           "operation": "modify",
-          "description": "Review the payment failure page implementation to ensure it properly handles Stripe callback errors. Verify that the component is wired into the router at path '/payment-failure' and provides clear error messaging without causing deployment issues."
+          "description": "Review the payment failure page to ensure it properly handles the Stripe redirect callback from production URLs and provides clear user guidance. Verify that the route registration at '/payment-failure' is functioning correctly in the production environment."
         },
         {
           "path": "frontend/src/App.tsx",
           "operation": "modify",
-          "description": "Verify that the payment success and failure routes are correctly registered at paths '/payment-success' and '/payment-failure' respectively. Ensure these routes match exactly what is passed to the backend createCheckoutSession function as successUrl and cancelUrl parameters. Confirm proper route configuration to prevent routing errors during deployment."
+          "description": "Verify that the route definitions for '/payment-success' and '/payment-failure' are correctly registered and will function properly in the production deployment environment. Ensure no route configuration issues that could cause deployment failures."
         },
         {
           "path": "frontend/src/components/PaymentSetup.tsx",
           "operation": "modify",
-          "description": "Review the Stripe configuration component to ensure it properly checks isStripeConfigured() before showing the admin setup panel. Verify that the component does not cause initialization errors during deployment and that the Stripe configuration flow completes successfully without blocking the deployment process."
+          "description": "Review the Stripe configuration component to ensure it correctly checks isStripeConfigured status and only displays the setup form when Stripe is not configured. Verify proper error handling and state management for production environment."
         }
       ]
     }

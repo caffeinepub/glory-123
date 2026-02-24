@@ -42,13 +42,14 @@ export default function PaymentSetup() {
           toast.success('Stripe configuration saved successfully');
           setSecretKey('');
         },
-        onError: (error) => {
+        onError: (error: any) => {
           toast.error(`Failed to save configuration: ${error.message}`);
         },
       }
     );
   };
 
+  // Show loading state while checking configuration
   if (isLoading) {
     return (
       <div className="flex items-center justify-center p-8">
@@ -57,6 +58,7 @@ export default function PaymentSetup() {
     );
   }
 
+  // Hide setup form if Stripe is already configured
   if (isConfigured) {
     return null;
   }

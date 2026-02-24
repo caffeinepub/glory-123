@@ -4,21 +4,30 @@
   "summary": "New project",
   "architectural_notes": [],
   "known_issues": [
-    "Deployment error during Version 5 production launch"
+    "Deployment error preventing live production deployment"
   ],
   "isFixRequest": true,
   "existing_features": [
     {
-      "id": "feature-diagnose-and-resolve-the-deployment-error-that-occurred-during-version-5-production-launch-ensuring-the-stripe-payment-integration-deploys-successfully",
-      "title": "Diagnose and resolve the deployment error that occurred during Version 5 production launch, ensuring the Stripe payment integration deploys successfully",
+      "id": "feature-verify-that-the-stripe-payment-integration-works-correctly-in-the-production-environment-after-deployment",
+      "title": "Verify that the Stripe payment integration works correctly in the production environment after deployment",
       "reqIds": [
-        "REQ-1"
+        "REQ-2"
       ],
       "version": 1
     }
   ],
-  "new_feature_requests": [],
-  "projectName": "Fix deployment error from Version 5",
+  "new_feature_requests": [
+    {
+      "id": "AR-1",
+      "summary": "Diagnose and resolve the deployment error that is preventing Version 6 from being deployed to production successfully",
+      "reqIds": [
+        "REQ-1"
+      ],
+      "status": "pending"
+    }
+  ],
+  "projectName": "Fix deployment error preventing production launch",
   "clarification_mode": "instant",
   "clarification_rounds": 0
 }

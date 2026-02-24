@@ -12,7 +12,6 @@ export default function PaymentSuccessPage() {
   useEffect(() => {
     // Clear cart data after successful payment
     queryClient.invalidateQueries({ queryKey: ['cart'] });
-    queryClient.invalidateQueries({ queryKey: ['cartTotal'] });
   }, [queryClient]);
 
   return (

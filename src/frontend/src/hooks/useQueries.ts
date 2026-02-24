@@ -142,17 +142,19 @@ export function useCreateCheckoutSession() {
   return useMutation({
     mutationFn: async (items: ShoppingItem[]): Promise<CheckoutSession> => {
       if (!actor) throw new Error('Actor not available');
+      
       const baseUrl = `${window.location.protocol}//${window.location.host}`;
       const successUrl = `${baseUrl}/payment-success`;
       const cancelUrl = `${baseUrl}/payment-failure`;
+      
       const result = await actor.createCheckoutSession(items, successUrl, cancelUrl);
       
-      // JSON parsing is important!
+      // JSON parsing is critical for Stripe integration
       const session = JSON.parse(result) as CheckoutSession;
       
-      // Validate session has required url field
-      if (!session?.url) {
-        throw new Error('Stripe session missing url');
+      // Validate that session has required url field
+      if (!session || !session.url || session.url.trim() === '') {
+        throw new Error('Stripe session missing url - cannot redirect to checkout');
       }
       
       return session;

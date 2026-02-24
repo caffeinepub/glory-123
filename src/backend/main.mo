@@ -11,9 +11,7 @@ import Principal "mo:core/Principal";
 import Float "mo:core/Float";
 import List "mo:core/List";
 import Order "mo:core/Order";
-import Migration "migration";
 
-(with migration = Migration.run)
 actor {
   // Actor fields with persistent state.
   var runningProductId = 0;
@@ -75,6 +73,9 @@ actor {
   };
 
   public query ({ caller }) func getCart() : async [CartItem] {
+    if (not (AccessControl.hasPermission(accessControlState, caller, #user))) {
+      Runtime.trap("Unauthorized: Only users can access cart");
+    };
     switch (cartState.get(caller)) {
       case (null) { [] };
       case (?cartItems) { cartItems.toArray() };
@@ -154,7 +155,10 @@ actor {
     await Stripe.createCheckoutSession(getStripeConfiguration(), caller, items, successUrl, cancelUrl, transform);
   };
 
-  public func getStripeSessionStatus(sessionId : Text) : async Stripe.StripeSessionStatus {
+  public shared ({ caller }) func getStripeSessionStatus(sessionId : Text) : async Stripe.StripeSessionStatus {
+    if (not (AccessControl.hasPermission(accessControlState, caller, #user))) {
+      Runtime.trap("Unauthorized: Only users can check session status");
+    };
     await Stripe.getSessionStatus(getStripeConfiguration(), sessionId, transform);
   };
 

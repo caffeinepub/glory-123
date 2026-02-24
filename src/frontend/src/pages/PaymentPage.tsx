@@ -32,12 +32,12 @@ export default function PaymentPage() {
       // Create checkout session
       const session = await createCheckoutSession.mutateAsync(shoppingItems);
 
-      // Validate session URL
-      if (!session?.url) {
-        throw new Error('Stripe session missing url');
+      // Double-check session URL exists before redirect
+      if (!session || !session.url || session.url.trim() === '') {
+        throw new Error('Stripe session missing url - cannot redirect to checkout');
       }
 
-      // Redirect to Stripe checkout
+      // Redirect to Stripe checkout using window.location.href (not router navigation)
       window.location.href = session.url;
     } catch (error: any) {
       setIsProcessing(false);
