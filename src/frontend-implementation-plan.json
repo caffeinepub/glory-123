@@ -1,46 +1,107 @@
 {
   "kind": "implementation_plan",
   "version": "1.0",
-  "title": "Fix Deployment Error and Verify Stripe Integration",
+  "title": "Retry Production Deployment - Frontend",
   "requirements": [
     {
-      "id": "REQ-2",
-      "summary": "Verify that the Stripe payment integration works correctly in the production environment after deployment",
+      "id": "REQ-3",
+      "summary": "Verify frontend assets are properly configured and ready for Version 7 production deployment",
       "acceptanceCriteria": [
-        "Users can initiate checkout sessions in production",
-        "Stripe redirect URLs function correctly",
-        "Payment success and failure callbacks work as expected"
+        "Version 7 successfully deploys to production without errors",
+        "All backend canisters are running and accessible",
+        "Frontend assets are properly served",
+        "Application is functional in production environment"
       ],
       "file_operations": [
         {
-          "path": "frontend/src/hooks/useQueries.ts",
+          "path": "frontend/index.html",
           "operation": "modify",
-          "description": "Review and verify the createCheckoutSession mutation to ensure proper JSON parsing of backend response, validation of session.url existence, and error handling. The mutation must validate that the parsed session includes a non-empty url before allowing redirect. Add explicit error handling if session.url is missing to prevent navigation to '/undefined'. Verify the component's usage instructions from the stripe component before implementing."
+          "description": "Verify HTML entry point has correct title, meta tags, and root div element for production deployment. Ensure all asset references are production-ready and no development-only configurations remain."
         },
         {
-          "path": "frontend/src/pages/PaymentPage.tsx",
+          "path": "frontend/src/main.tsx",
           "operation": "modify",
-          "description": "Verify that the payment page correctly uses window.location.href for Stripe URL redirection (not router navigation), validates that session.url exists before redirecting, and displays appropriate error messages if the checkout session creation fails or returns an invalid URL. Ensure no navigation to '/undefined' occurs. The page must check 'if (!session?.url) throw new Error' before any redirect attempt. Verify the component's usage instructions from the stripe component before implementing."
-        },
-        {
-          "path": "frontend/src/pages/PaymentSuccessPage.tsx",
-          "operation": "modify",
-          "description": "Review the payment success page to ensure it properly handles the Stripe redirect callback from production URLs, invalidates cart queries correctly, and displays appropriate success messaging. Verify that the route registration at '/payment-success' is functioning correctly in the production environment."
-        },
-        {
-          "path": "frontend/src/pages/PaymentFailurePage.tsx",
-          "operation": "modify",
-          "description": "Review the payment failure page to ensure it properly handles the Stripe redirect callback from production URLs and provides clear user guidance. Verify that the route registration at '/payment-failure' is functioning correctly in the production environment."
+          "description": "Verify application entry point correctly initializes React Query and Internet Identity providers for production. Ensure no development-only configurations or console logs that could impact production performance."
         },
         {
           "path": "frontend/src/App.tsx",
           "operation": "modify",
-          "description": "Verify that the route definitions for '/payment-success' and '/payment-failure' are correctly registered and will function properly in the production deployment environment. Ensure no route configuration issues that could cause deployment failures."
+          "description": "Verify TanStack Router configuration includes all required routes (products, cart, payment-success, payment-failure, admin) and that the Layout component with Header, Footer, and Toaster is properly wired for production deployment."
+        },
+        {
+          "path": "frontend/src/hooks/useActor.ts",
+          "operation": "modify",
+          "description": "Verify backend actor initialization works correctly in production, including authenticated and anonymous actor creation based on Internet Identity state. Ensure admin token handling from URL parameters functions properly in production environment."
+        },
+        {
+          "path": "frontend/src/hooks/useInternetIdentity.ts",
+          "operation": "modify",
+          "description": "Verify Internet Identity authentication flows (login, logout, delegation validity) work correctly in production environment. Ensure @dfinity/auth-client is properly configured for production canister endpoints."
+        },
+        {
+          "path": "frontend/src/hooks/useQueries.ts",
+          "operation": "modify",
+          "description": "Verify all React Query hooks for data fetching (products, cart, Stripe configuration, checkout sessions) are production-ready. Ensure error handling and retry logic is appropriate for production use. Verify the useCreateCheckoutSession hook correctly parses JSON from backend, validates session.url exists, and uses window.location.href (not router navigation) for Stripe redirect."
         },
         {
           "path": "frontend/src/components/PaymentSetup.tsx",
           "operation": "modify",
-          "description": "Review the Stripe configuration component to ensure it correctly checks isStripeConfigured status and only displays the setup form when Stripe is not configured. Verify proper error handling and state management for production environment."
+          "description": "Verify Stripe configuration component correctly checks isStripeConfigured() and conditionally renders setup UI only when needed. Ensure admin can configure Stripe secret key and allowed countries for production payment processing. Use the stripe component to support payment configuration."
+        },
+        {
+          "path": "frontend/src/pages/PaymentPage.tsx",
+          "operation": "modify",
+          "description": "Verify Payment page correctly integrates with Stripe checkout, displays cart summary, and creates checkout sessions. Ensure the page uses useCreateCheckoutSession() hook and redirects to Stripe using window.location.href = session.url (never navigate to /undefined). Use the stripe component for payment session creation."
+        },
+        {
+          "path": "frontend/src/pages/PaymentSuccessPage.tsx",
+          "operation": "modify",
+          "description": "Verify payment success page correctly handles successful payment completion, invalidates cart cache, and provides navigation options. Ensure route /payment-success is properly registered in TanStack Router for Stripe redirect callback."
+        },
+        {
+          "path": "frontend/src/pages/PaymentFailurePage.tsx",
+          "operation": "modify",
+          "description": "Verify payment failure page displays appropriate error messaging and provides retry/return options. Ensure route /payment-failure is properly registered in TanStack Router for Stripe redirect callback."
+        },
+        {
+          "path": "frontend/src/pages/AdminPage.tsx",
+          "operation": "modify",
+          "description": "Verify admin page authentication works in production, including password-protected login and product management form. Ensure Stripe configuration is accessible to admins and prompts configuration if not yet set up. Use the authorization component to verify admin access control."
+        },
+        {
+          "path": "frontend/src/pages/ProductListPage.tsx",
+          "operation": "modify",
+          "description": "Verify product listing page displays hero banner using generated asset frontend/public/assets/generated/hero-banner.dim_1920x600.png, implements search and category filtering, and renders product cards in responsive grid. Ensure all product images are properly loaded in production."
+        },
+        {
+          "path": "frontend/src/pages/ProductDetailPage.tsx",
+          "operation": "modify",
+          "description": "Verify product detail page loads product information correctly from backend, displays product image and description, and provides add-to-cart functionality with proper loading and error states for production."
+        },
+        {
+          "path": "frontend/src/pages/CartPage.tsx",
+          "operation": "modify",
+          "description": "Verify shopping cart page displays cart items with quantity controls, calculates totals correctly, and provides navigation to payment page. Ensure cart operations work reliably in production environment."
+        },
+        {
+          "path": "frontend/src/components/Header.tsx",
+          "operation": "modify",
+          "description": "Verify header component displays GLORY 123 branding, navigation links to Products and Admin pages, and shopping cart icon with dynamic item count badge. Ensure all navigation works correctly in production."
+        },
+        {
+          "path": "frontend/src/components/Footer.tsx",
+          "operation": "modify",
+          "description": "Verify footer component displays GLORY 123 branding, contact information (phone: 9892246308, address: R.N.15 DHARAVI MUMBAI), social media links, and Caffeine.ai attribution. Ensure all links and styling work correctly in production."
+        },
+        {
+          "path": "frontend/index.css",
+          "operation": "modify",
+          "description": "Verify Tailwind CSS configuration and OKLCH color system for light and dark modes are production-ready. Ensure styles load correctly and provide proper theming for the application."
+        },
+        {
+          "path": "frontend/tailwind.config.js",
+          "operation": "modify",
+          "description": "Verify Tailwind configuration with custom theme extensions (OKLCH colors, typography, animations) is optimized for production build. Ensure all custom styles and design system components compile correctly."
         }
       ]
     }

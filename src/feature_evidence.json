@@ -1,30 +1,4 @@
 {
   "kind": "feature_evidence_report",
-  "features": [
-    {
-      "featureId": "feature-verify-that-the-stripe-payment-integration-works-correctly-in-the-production-environment-after-deployment",
-      "featureTitle": "Verify that the Stripe payment integration works correctly in the production environment after deployment",
-      "files": [
-        "frontend/src/App.tsx",
-        "frontend/src/components/PaymentSetup.tsx",
-        "frontend/src/hooks/useQueries.ts",
-        "frontend/src/pages/PaymentPage.tsx",
-        "frontend/src/pages/PaymentSuccessPage.tsx"
-      ],
-      "components": [
-        "core-infrastructure@1.0.2",
-        "shadcn-ui@1.0.0",
-        "build-template-react@1.0.0",
-        "initial-app@1.0.0",
-        "github-export-icp-cli@1.0.0",
-        "stripe@3.0.0",
-        "http-outcalls@3.0.0",
-        "authorization@4.0.0"
-      ],
-      "testIds": [
-        "REQ-2"
-      ],
-      "confidence": "high"
-    }
-  ]
+  "features": []
 }

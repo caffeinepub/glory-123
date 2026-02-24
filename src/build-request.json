@@ -1,51 +1,37 @@
 {
   "kind": "build_request",
-  "title": "Fix deployment error preventing production launch",
+  "title": "Retry Production Deployment",
   "priority": "high",
   "requirements": [
     {
-      "id": "REQ-1",
-      "text": "Diagnose and resolve the deployment error that is preventing Version 6 from being deployed to production successfully",
-      "target": "backend",
-      "source": {
-        "messageIds": [
-          "msg-last"
-        ],
-        "quotes": [
-          "So fix that 😑"
-        ]
-      },
-      "acceptanceCriteria": [
-        "The deployment completes without errors",
-        "Version 6 successfully deploys to production",
-        "All existing functionality (products, cart, Stripe payments, admin) remains operational after deployment"
-      ]
-    },
-    {
-      "id": "REQ-2",
-      "text": "Verify that the Stripe payment integration works correctly in the production environment after deployment",
+      "id": "REQ-3",
+      "text": "Retry deploying Version 7 to production environment",
       "target": "both",
       "source": {
         "messageIds": [
-          "msg-last"
+          "msg-latest"
+        ],
+        "quotes": [
+          "Again 😭"
         ]
       },
       "acceptanceCriteria": [
-        "Users can initiate checkout sessions in production",
-        "Stripe redirect URLs function correctly",
-        "Payment success and failure callbacks work as expected"
+        "Version 7 successfully deploys to production without errors",
+        "All backend canisters are running and accessible",
+        "Frontend assets are properly served",
+        "Application is functional in production environment"
       ]
     }
   ],
   "constraints": [
-    "Maintain backward compatibility with existing state data during deployment",
-    "Preserve all existing features: product management, cart, user profiles, and admin access control",
-    "Do not change the frontend routing or component structure"
+    "Do not modify any existing code or features",
+    "Maintain all existing Stripe payment integration functionality",
+    "Preserve current admin authentication and product management features"
   ],
   "nonGoals": [
     "Adding new features or functionality",
-    "Changing the UI/UX design",
-    "Modifying the Stripe payment flow beyond fixing deployment issues"
+    "Modifying existing business logic",
+    "Changing UI design or styling"
   ],
   "imageRequirements": {
     "required": [],

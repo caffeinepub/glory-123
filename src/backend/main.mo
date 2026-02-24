@@ -1,29 +1,29 @@
 import Stripe "stripe/stripe";
 import OutCall "http-outcalls/outcall";
 import Map "mo:core/Map";
-import Text "mo:core/Text";
-import Iter "mo:core/Iter";
 import Runtime "mo:core/Runtime";
 import Nat "mo:core/Nat";
+import List "mo:core/List";
+import Iter "mo:core/Iter";
 import AccessControl "authorization/access-control";
 import MixinAuthorization "authorization/MixinAuthorization";
 import Principal "mo:core/Principal";
 import Float "mo:core/Float";
-import List "mo:core/List";
 import Order "mo:core/Order";
 
 actor {
-  // Actor fields with persistent state.
+  // Actor state
   var runningProductId = 0;
   var stripeConfiguration : ?Stripe.StripeConfiguration = null;
   let productsState = Map.empty<Nat, Product>();
   let cartState = Map.empty<Principal, List.List<CartItem>>();
   let userProfileState = Map.empty<Principal, UserProfile>();
 
-  // Authorization system
+  // Authorization
   let accessControlState = AccessControl.initState();
   include MixinAuthorization(accessControlState);
 
+  // Types
   type Product = {
     id : Nat;
     name : Text;
@@ -54,6 +54,7 @@ actor {
     };
   };
 
+  // Product Management
   public shared ({ caller }) func addProduct(name : Text, category : Text, price : Float, description : Text) : async () {
     if (not (AccessControl.hasPermission(accessControlState, caller, #admin))) {
       Runtime.trap("Unauthorized: Only admins can add products");
@@ -72,6 +73,15 @@ actor {
     runningProductId += 1;
   };
 
+  public query func getProducts() : async [Product] {
+    productsState.values().toArray();
+  };
+
+  public query func getAllProducts() : async [Product] {
+    productsState.values().toArray();
+  };
+
+  // Cart Management
   public query ({ caller }) func getCart() : async [CartItem] {
     if (not (AccessControl.hasPermission(accessControlState, caller, #user))) {
       Runtime.trap("Unauthorized: Only users can access cart");
@@ -126,6 +136,7 @@ actor {
     cartState.remove(caller);
   };
 
+  // Stripe Integration
   public shared ({ caller }) func setStripeConfiguration(config : Stripe.StripeConfiguration) : async () {
     if (not (AccessControl.hasPermission(accessControlState, caller, #admin))) {
       Runtime.trap("Unauthorized: Only admins can perform this action");
@@ -162,14 +173,7 @@ actor {
     await Stripe.getSessionStatus(getStripeConfiguration(), sessionId, transform);
   };
 
-  public query func getProducts() : async [Product] {
-    productsState.values().toArray();
-  };
-
-  public query func getAllProducts() : async [Product] {
-    productsState.values().toArray();
-  };
-
+  // User Profile Management
   public shared ({ caller }) func setUserProfile(profile : UserProfile) : async () {
     if (not (AccessControl.hasPermission(accessControlState, caller, #user))) {
       Runtime.trap("Unauthorized: Only users can set profiles");

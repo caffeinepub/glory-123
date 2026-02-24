@@ -1,11 +1,12 @@
 # Specification
 
 ## Summary
-**Goal:** Fix deployment error preventing Version 6 from launching to production and verify Stripe payment integration works in production environment.
+**Goal:** Retry deploying Version 7 to production environment.
 
 **Planned changes:**
-- Diagnose and resolve the deployment error blocking production launch
-- Verify Stripe payment integration functions correctly after deployment
-- Ensure all existing features remain operational post-deployment
+- Reattempt production deployment of Version 7
+- Ensure all backend canisters deploy successfully
+- Verify frontend assets are properly served
+- Confirm application functionality in production
 
-**User-visible outcome:** The application successfully deploys to production with all features (products, cart, Stripe payments, admin) working correctly.
+**User-visible outcome:** The application is successfully running in production with all features functional.
