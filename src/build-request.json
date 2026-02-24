@@ -1,74 +1,35 @@
 {
   "kind": "build_request",
-  "title": "Integrate Stripe payment processing",
-  "projectName": "GLORY 123",
-  "priority": "normal",
+  "title": "Fix deployment error from Version 5",
+  "priority": "high",
   "requirements": [
     {
       "id": "REQ-1",
-      "text": "Add Stripe payment processing integration to replace the current payment methods (Cash on Delivery and UPI). The payment flow should automatically confirm orders upon successful payment.",
+      "text": "Diagnose and resolve the deployment error that occurred during Version 5 production launch, ensuring the Stripe payment integration deploys successfully",
       "target": "both",
       "source": {
         "messageIds": [
-          "msg-recent"
+          "msg-deployment-error"
         ],
         "quotes": [
-          "set up Stripe payments"
+          "🙏 Go live encountered an issue: Deployment error"
         ]
       },
       "acceptanceCriteria": [
-        "Stripe payment option is available on the payment page",
-        "Users can complete payment through Stripe's secure checkout",
-        "Orders are automatically confirmed after successful Stripe payment",
-        "Payment confirmation updates the order status in the backend"
-      ]
-    },
-    {
-      "id": "REQ-2",
-      "text": "Update the PaymentPage.tsx to include Stripe as a payment method option alongside or replacing existing payment methods.",
-      "target": "frontend",
-      "source": {
-        "messageIds": [
-          "msg-recent"
-        ],
-        "quotes": [
-          "make the payment page well where I can connect my bank"
-        ]
-      },
-      "acceptanceCriteria": [
-        "Payment page displays Stripe payment option",
-        "Payment method selection works correctly",
-        "UI clearly indicates secure payment processing"
-      ]
-    },
-    {
-      "id": "REQ-3",
-      "text": "Implement backend logic to handle Stripe payment webhooks and automatically confirm orders when payment is successful.",
-      "target": "backend",
-      "source": {
-        "messageIds": [
-          "msg-recent"
-        ],
-        "quotes": [
-          "when the customer have paid for the order my bank will detect it automatically and then you conform the order"
-        ]
-      },
-      "acceptanceCriteria": [
-        "Backend receives and validates Stripe webhook events",
-        "Order status is updated to confirmed upon successful payment",
-        "Failed payments do not confirm orders"
+        "Version 5 deploys successfully to production without errors",
+        "All Stripe payment integration features remain functional after deployment",
+        "Backend actor compiles and initializes correctly on the network"
       ]
     }
   ],
   "constraints": [
-    "Must use Stripe for payment processing (external bank integration is not supported)",
-    "Preserve existing product management and cart functionality",
-    "Do not modify Internet Identity authentication hooks"
+    "Preserve all existing Stripe payment integration functionality",
+    "Maintain backward compatibility with existing cart and order data"
   ],
   "nonGoals": [
-    "Direct bank account integration",
-    "Custom payment gateway development",
-    "Real-time bank transaction monitoring outside of Stripe"
+    "Adding new payment features",
+    "Modifying existing user interface components",
+    "Changing the Stripe integration logic"
   ],
   "imageRequirements": {
     "required": [],

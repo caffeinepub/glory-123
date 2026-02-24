@@ -2,15 +2,15 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { useActor } from './useActor';
 import type { Product, CartItem, ShoppingItem, StripeConfiguration } from '../backend';
 
-// Query to search products (we'll use this for "get all" by passing empty string)
-export function useProducts(searchTerm: string = '') {
+// Query to get all products
+export function useProducts() {
   const { actor, isFetching } = useActor();
 
   return useQuery<Product[]>({
-    queryKey: ['products', searchTerm],
+    queryKey: ['products'],
     queryFn: async () => {
       if (!actor) return [];
-      return actor.searchProducts(searchTerm);
+      return actor.getAllProducts();
     },
     enabled: !!actor && !isFetching,
   });
@@ -24,24 +24,26 @@ export function useCart() {
     queryKey: ['cart'],
     queryFn: async () => {
       if (!actor) return [];
-      return actor.viewCart();
+      return actor.getCart();
     },
     enabled: !!actor && !isFetching,
   });
 }
 
-// Query to calculate cart total
+// Query to calculate cart total (computed from cart items and products)
 export function useCartTotal() {
-  const { actor, isFetching } = useActor();
+  const { data: cartItems = [] } = useCart();
+  const { data: products = [] } = useProducts();
 
-  return useQuery<number>({
-    queryKey: ['cartTotal'],
-    queryFn: async () => {
-      if (!actor) return 0;
-      return actor.calculateTotal();
-    },
-    enabled: !!actor && !isFetching,
-  });
+  const total = cartItems.reduce((sum, item) => {
+    const product = products.find((p) => p.id === item.productId);
+    if (product) {
+      return sum + product.price * Number(item.quantity);
+    }
+    return sum;
+  }, 0);
+
+  return { data: total, isLoading: false };
 }
 
 // Query to check if Stripe is configured
@@ -69,19 +71,9 @@ export function useAddProduct() {
       category: string; 
       price: number; 
       description: string;
-      imageData?: string;
     }) => {
       if (!actor) throw new Error('Actor not initialized');
-      
-      // First, add the product
-      const productId = await actor.addProduct(data.name, data.category, data.price, data.description);
-      
-      // If imageData is provided, upload it
-      if (data.imageData) {
-        await actor.uploadProductImage(productId, data.imageData);
-      }
-      
-      return productId;
+      return actor.addProduct(data.name, data.category, data.price, data.description);
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['products'] });
@@ -89,52 +81,34 @@ export function useAddProduct() {
   });
 }
 
-// Mutation to add review
-export function useAddReview() {
-  const { actor } = useActor();
-  const queryClient = useQueryClient();
-
-  return useMutation({
-    mutationFn: async (data: { productId: bigint; review: string }) => {
-      if (!actor) throw new Error('Actor not initialized');
-      return actor.addReview(data.productId, data.review);
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['products'] });
-    },
-  });
-}
-
-// Mutation to add to cart
-export function useAddToCart() {
+// Mutation to update cart (handles add, update quantity, and remove)
+export function useUpdateCart() {
   const { actor } = useActor();
   const queryClient = useQueryClient();
 
   return useMutation({
     mutationFn: async (data: { productId: bigint; quantity: bigint }) => {
       if (!actor) throw new Error('Actor not initialized');
-      return actor.addToCart(data.productId, data.quantity);
+      return actor.updateCart(data.productId, data.quantity);
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['cart'] });
-      queryClient.invalidateQueries({ queryKey: ['cartTotal'] });
     },
   });
 }
 
-// Mutation to update cart quantity
-export function useUpdateCartQuantity() {
+// Mutation to clear cart
+export function useClearCart() {
   const { actor } = useActor();
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: async (data: { productId: bigint; newQuantity: bigint }) => {
+    mutationFn: async () => {
       if (!actor) throw new Error('Actor not initialized');
-      return actor.updateCartQuantity(data.productId, data.newQuantity);
+      return actor.clearCart();
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['cart'] });
-      queryClient.invalidateQueries({ queryKey: ['cartTotal'] });
     },
   });
 }
@@ -172,11 +146,15 @@ export function useCreateCheckoutSession() {
       const successUrl = `${baseUrl}/payment-success`;
       const cancelUrl = `${baseUrl}/payment-failure`;
       const result = await actor.createCheckoutSession(items, successUrl, cancelUrl);
+      
       // JSON parsing is important!
       const session = JSON.parse(result) as CheckoutSession;
+      
+      // Validate session has required url field
       if (!session?.url) {
         throw new Error('Stripe session missing url');
       }
+      
       return session;
     },
   });
@@ -199,30 +177,5 @@ export function convertCartToShoppingItems(
       priceInCents: BigInt(Math.round(product.price * 100)),
       quantity: cartItem.quantity,
     };
-  });
-}
-
-// Mutation to verify admin password
-export function useAdminLogin() {
-  const { actor } = useActor();
-
-  return useMutation({
-    mutationFn: async (password: string) => {
-      if (!actor) throw new Error('Actor not initialized');
-      
-      // TODO: Replace with actual backend call when implemented
-      // For now, using a temporary client-side check
-      // This should be: return actor.verifyAdminPassword(password);
-      
-      // Temporary hardcoded password check (INSECURE - for demo only)
-      // In production, this MUST be replaced with backend verification
-      const isValid = password === 'admin123';
-      
-      if (!isValid) {
-        throw new Error('Invalid password');
-      }
-      
-      return isValid;
-    },
   });
 }

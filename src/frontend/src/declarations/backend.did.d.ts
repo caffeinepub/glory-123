@@ -13,7 +13,6 @@ import type { Principal } from '@icp-sdk/core/principal';
 export interface CartItem { 'productId' : bigint, 'quantity' : bigint }
 export interface Product {
   'id' : bigint,
-  'reviews' : Array<string>,
   'imageData' : [] | [string],
   'name' : string,
   'description' : string,
@@ -60,29 +59,27 @@ export interface http_request_result {
 }
 export interface _SERVICE {
   '_initializeAccessControlWithSecret' : ActorMethod<[string], undefined>,
-  'addProduct' : ActorMethod<[string, string, number, string], bigint>,
-  'addReview' : ActorMethod<[bigint, string], undefined>,
-  'addToCart' : ActorMethod<[bigint, bigint], undefined>,
+  'addProduct' : ActorMethod<[string, string, number, string], undefined>,
   'assignCallerUserRole' : ActorMethod<[Principal, UserRole], undefined>,
-  'calculateTotal' : ActorMethod<[], number>,
+  'clearCart' : ActorMethod<[], undefined>,
   'createCheckoutSession' : ActorMethod<
     [Array<ShoppingItem>, string, string],
     string
   >,
-  'createStripeSession' : ActorMethod<[string, string], string>,
+  'getAllProducts' : ActorMethod<[], Array<Product>>,
   'getCallerUserProfile' : ActorMethod<[], [] | [UserProfile]>,
   'getCallerUserRole' : ActorMethod<[], UserRole>,
+  'getCart' : ActorMethod<[], Array<CartItem>>,
+  'getProducts' : ActorMethod<[], Array<Product>>,
   'getStripeSessionStatus' : ActorMethod<[string], StripeSessionStatus>,
   'getUserProfile' : ActorMethod<[Principal], [] | [UserProfile]>,
   'isCallerAdmin' : ActorMethod<[], boolean>,
   'isStripeConfigured' : ActorMethod<[], boolean>,
   'saveCallerUserProfile' : ActorMethod<[UserProfile], undefined>,
-  'searchProducts' : ActorMethod<[string], Array<Product>>,
   'setStripeConfiguration' : ActorMethod<[StripeConfiguration], undefined>,
+  'setUserProfile' : ActorMethod<[UserProfile], undefined>,
   'transform' : ActorMethod<[TransformationInput], TransformationOutput>,
-  'updateCartQuantity' : ActorMethod<[bigint, bigint], undefined>,
-  'uploadProductImage' : ActorMethod<[bigint, string], undefined>,
-  'viewCart' : ActorMethod<[], Array<CartItem>>,
+  'updateCart' : ActorMethod<[bigint, bigint], undefined>,
 }
 export declare const idlService: IDL.ServiceClass;
 export declare const idlInitArgs: IDL.Type[];

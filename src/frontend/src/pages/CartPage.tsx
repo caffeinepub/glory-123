@@ -1,47 +1,58 @@
 import { useNavigate } from '@tanstack/react-router';
-import { ShoppingBag, Plus, Minus } from 'lucide-react';
+import { Trash2, Plus, Minus, ShoppingBag, ArrowRight } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Separator } from '@/components/ui/separator';
-import { useCart, useCartTotal, useProducts, useUpdateCartQuantity } from '../hooks/useQueries';
-import { Skeleton } from '@/components/ui/skeleton';
+import { useCart, useProducts, useUpdateCart, useCartTotal } from '../hooks/useQueries';
+import { toast } from 'sonner';
 
 export default function CartPage() {
   const navigate = useNavigate();
   const { data: cartItems = [], isLoading: cartLoading } = useCart();
-  const { data: total = 0, isLoading: totalLoading } = useCartTotal();
-  const { data: products = [] } = useProducts('');
-  const updateCartQuantityMutation = useUpdateCartQuantity();
+  const { data: products = [], isLoading: productsLoading } = useProducts();
+  const { data: total = 0 } = useCartTotal();
+  const updateCart = useUpdateCart();
 
-  const cartWithProducts = cartItems.map((item) => {
-    const product = products.find((p) => p.id === item.productId);
-    return { ...item, product };
-  });
+  const isLoading = cartLoading || productsLoading;
 
-  const handleQuantityChange = (productId: bigint, newQuantity: number) => {
-    if (newQuantity < 1) return;
-    updateCartQuantityMutation.mutate({ productId, newQuantity: BigInt(newQuantity) });
-  };
+  const handleUpdateQuantity = async (productId: bigint, currentQuantity: bigint, change: number) => {
+    const newQuantity = Number(currentQuantity) + change;
+    
+    if (newQuantity < 0) return;
 
-  // Get product image - use uploaded image if available, otherwise fallback to placeholder
-  const getProductImageSrc = (productId: bigint, product?: typeof products[0]) => {
-    if (product?.imageData) {
-      return `data:image/png;base64,${product.imageData}`;
+    try {
+      await updateCart.mutateAsync({
+        productId,
+        quantity: BigInt(newQuantity),
+      });
+      
+      if (newQuantity === 0) {
+        toast.success('Item removed from cart');
+      }
+    } catch (error: any) {
+      toast.error(error.message || 'Failed to update cart');
     }
-    return `/assets/generated/product-placeholder-${(Number(productId) % 3) + 1}.dim_400x400.png`;
   };
 
-  if (cartLoading || totalLoading) {
+  const handleRemoveItem = async (productId: bigint) => {
+    try {
+      await updateCart.mutateAsync({
+        productId,
+        quantity: BigInt(0),
+      });
+      toast.success('Item removed from cart');
+    } catch (error: any) {
+      toast.error(error.message || 'Failed to remove item');
+    }
+  };
+
+  if (isLoading) {
     return (
       <div className="container mx-auto px-4 py-8 sm:px-6 lg:px-8">
-        <Skeleton className="h-12 w-48 mb-8" />
-        <div className="grid gap-8 lg:grid-cols-3">
-          <div className="lg:col-span-2 space-y-4">
-            {[...Array(3)].map((_, i) => (
-              <Skeleton key={i} className="h-32 w-full" />
-            ))}
-          </div>
-          <Skeleton className="h-64 w-full" />
+        <div className="animate-pulse space-y-4">
+          <div className="h-8 w-48 rounded bg-muted" />
+          <div className="h-32 rounded-lg bg-muted" />
+          <div className="h-32 rounded-lg bg-muted" />
         </div>
       </div>
     );
@@ -49,8 +60,8 @@ export default function CartPage() {
 
   if (cartItems.length === 0) {
     return (
-      <div className="container mx-auto px-4 py-16 text-center">
-        <ShoppingBag className="mx-auto h-16 w-16 text-muted-foreground mb-4" />
+      <div className="container mx-auto px-4 py-16 text-center sm:px-6 lg:px-8">
+        <ShoppingBag className="mx-auto mb-4 h-16 w-16 text-muted-foreground" />
         <h2 className="mb-2 text-2xl font-bold">Your cart is empty</h2>
         <p className="mb-6 text-muted-foreground">
           Add some products to get started!
@@ -68,58 +79,79 @@ export default function CartPage() {
 
       <div className="grid gap-8 lg:grid-cols-3">
         {/* Cart Items */}
-        <div className="lg:col-span-2 space-y-4">
-          {cartWithProducts.map((item) => {
-            if (!item.product) return null;
+        <div className="space-y-4 lg:col-span-2">
+          {cartItems.map((item) => {
+            const product = products.find((p) => p.id === item.productId);
+            if (!product) return null;
+
+            const itemTotal = product.price * Number(item.quantity);
+
             return (
               <Card key={Number(item.productId)}>
-                <CardContent className="p-4">
+                <CardContent className="p-6">
                   <div className="flex gap-4">
-                    <img
-                      src={getProductImageSrc(item.productId, item.product)}
-                      alt={item.product.name}
-                      className="h-20 w-20 rounded-lg object-cover bg-muted flex-shrink-0"
-                    />
-                    <div className="flex-1 min-w-0">
-                      <h3 className="font-semibold mb-1 truncate">{item.product.name}</h3>
-                      <p className="text-sm text-muted-foreground mb-2">
-                        {item.product.category}
-                      </p>
-                      <p className="text-lg font-bold text-primary">
-                        ₹{item.product.price.toFixed(2)}
-                      </p>
+                    <div className="h-24 w-24 flex-shrink-0 overflow-hidden rounded-lg bg-muted">
+                      {product.imageData ? (
+                        <img
+                          src={product.imageData}
+                          alt={product.name}
+                          className="h-full w-full object-cover"
+                        />
+                      ) : (
+                        <div className="flex h-full items-center justify-center">
+                          <ShoppingBag className="h-8 w-8 text-muted-foreground/30" />
+                        </div>
+                      )}
                     </div>
-                    <div className="flex flex-col items-end justify-between">
-                      <div className="flex items-center gap-2 rounded-lg border border-border p-1">
-                        <Button
-                          variant="ghost"
-                          size="icon"
-                          className="h-7 w-7"
-                          onClick={() =>
-                            handleQuantityChange(item.productId, Number(item.quantity) - 1)
-                          }
-                          disabled={Number(item.quantity) <= 1 || updateCartQuantityMutation.isPending}
-                        >
-                          <Minus className="h-3 w-3" />
-                        </Button>
-                        <span className="w-8 text-center font-medium">
-                          {Number(item.quantity)}
-                        </span>
-                        <Button
-                          variant="ghost"
-                          size="icon"
-                          className="h-7 w-7"
-                          onClick={() =>
-                            handleQuantityChange(item.productId, Number(item.quantity) + 1)
-                          }
-                          disabled={updateCartQuantityMutation.isPending}
-                        >
-                          <Plus className="h-3 w-3" />
-                        </Button>
+
+                    <div className="flex flex-1 flex-col justify-between">
+                      <div>
+                        <h3 className="font-semibold">{product.name}</h3>
+                        <p className="text-sm text-muted-foreground capitalize">
+                          {product.category}
+                        </p>
+                        <p className="mt-1 font-semibold text-primary">
+                          ${product.price.toFixed(2)}
+                        </p>
                       </div>
-                      <p className="text-sm font-semibold">
-                        ₹{(item.product.price * Number(item.quantity)).toFixed(2)}
-                      </p>
+
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center gap-2">
+                          <Button
+                            size="icon"
+                            variant="outline"
+                            onClick={() => handleUpdateQuantity(item.productId, item.quantity, -1)}
+                            disabled={updateCart.isPending}
+                          >
+                            <Minus className="h-4 w-4" />
+                          </Button>
+                          <span className="w-12 text-center font-medium">
+                            {Number(item.quantity)}
+                          </span>
+                          <Button
+                            size="icon"
+                            variant="outline"
+                            onClick={() => handleUpdateQuantity(item.productId, item.quantity, 1)}
+                            disabled={updateCart.isPending}
+                          >
+                            <Plus className="h-4 w-4" />
+                          </Button>
+                        </div>
+
+                        <div className="flex items-center gap-4">
+                          <span className="font-semibold">
+                            ${itemTotal.toFixed(2)}
+                          </span>
+                          <Button
+                            size="icon"
+                            variant="ghost"
+                            onClick={() => handleRemoveItem(item.productId)}
+                            disabled={updateCart.isPending}
+                          >
+                            <Trash2 className="h-4 w-4 text-destructive" />
+                          </Button>
+                        </div>
+                      </div>
                     </div>
                   </div>
                 </CardContent>
@@ -137,7 +169,7 @@ export default function CartPage() {
             <CardContent className="space-y-4">
               <div className="flex justify-between text-sm">
                 <span className="text-muted-foreground">Subtotal</span>
-                <span className="font-medium">₹{total.toFixed(2)}</span>
+                <span className="font-medium">${total.toFixed(2)}</span>
               </div>
               <div className="flex justify-between text-sm">
                 <span className="text-muted-foreground">Shipping</span>
@@ -146,7 +178,7 @@ export default function CartPage() {
               <Separator />
               <div className="flex justify-between text-lg font-bold">
                 <span>Total</span>
-                <span className="text-primary">₹{total.toFixed(2)}</span>
+                <span className="text-primary">${total.toFixed(2)}</span>
               </div>
             </CardContent>
             <CardFooter>
@@ -156,6 +188,7 @@ export default function CartPage() {
                 onClick={() => navigate({ to: '/payment' })}
               >
                 Proceed to Payment
+                <ArrowRight className="ml-2 h-4 w-4" />
               </Button>
             </CardFooter>
           </Card>

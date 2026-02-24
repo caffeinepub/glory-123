@@ -14,7 +14,6 @@ export interface http_request_result {
 }
 export interface Product {
     id: bigint;
-    reviews: Array<string>;
     imageData?: string;
     name: string;
     description: string;
@@ -72,24 +71,22 @@ export enum UserRole {
     guest = "guest"
 }
 export interface backendInterface {
-    addProduct(name: string, category: string, price: number, description: string): Promise<bigint>;
-    addReview(productId: bigint, review: string): Promise<void>;
-    addToCart(productId: bigint, quantity: bigint): Promise<void>;
+    addProduct(name: string, category: string, price: number, description: string): Promise<void>;
     assignCallerUserRole(user: Principal, role: UserRole): Promise<void>;
-    calculateTotal(): Promise<number>;
+    clearCart(): Promise<void>;
     createCheckoutSession(items: Array<ShoppingItem>, successUrl: string, cancelUrl: string): Promise<string>;
-    createStripeSession(successUrl: string, cancelUrl: string): Promise<string>;
+    getAllProducts(): Promise<Array<Product>>;
     getCallerUserProfile(): Promise<UserProfile | null>;
     getCallerUserRole(): Promise<UserRole>;
+    getCart(): Promise<Array<CartItem>>;
+    getProducts(): Promise<Array<Product>>;
     getStripeSessionStatus(sessionId: string): Promise<StripeSessionStatus>;
     getUserProfile(user: Principal): Promise<UserProfile | null>;
     isCallerAdmin(): Promise<boolean>;
     isStripeConfigured(): Promise<boolean>;
     saveCallerUserProfile(profile: UserProfile): Promise<void>;
-    searchProducts(searchTerm: string): Promise<Array<Product>>;
     setStripeConfiguration(config: StripeConfiguration): Promise<void>;
+    setUserProfile(profile: UserProfile): Promise<void>;
     transform(input: TransformationInput): Promise<TransformationOutput>;
-    updateCartQuantity(productId: bigint, newQuantity: bigint): Promise<void>;
-    uploadProductImage(productId: bigint, imageData: string): Promise<void>;
-    viewCart(): Promise<Array<CartItem>>;
+    updateCart(productId: bigint, newQuantity: bigint): Promise<void>;
 }

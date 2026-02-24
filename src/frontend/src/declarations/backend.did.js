@@ -20,10 +20,22 @@ export const ShoppingItem = IDL.Record({
   'priceInCents' : IDL.Nat,
   'productDescription' : IDL.Text,
 });
+export const Product = IDL.Record({
+  'id' : IDL.Nat,
+  'imageData' : IDL.Opt(IDL.Text),
+  'name' : IDL.Text,
+  'description' : IDL.Text,
+  'category' : IDL.Text,
+  'price' : IDL.Float64,
+});
 export const UserProfile = IDL.Record({
   'name' : IDL.Text,
   'email' : IDL.Text,
   'shippingAddress' : IDL.Text,
+});
+export const CartItem = IDL.Record({
+  'productId' : IDL.Nat,
+  'quantity' : IDL.Nat,
 });
 export const StripeSessionStatus = IDL.Variant({
   'completed' : IDL.Record({
@@ -31,15 +43,6 @@ export const StripeSessionStatus = IDL.Variant({
     'response' : IDL.Text,
   }),
   'failed' : IDL.Record({ 'error' : IDL.Text }),
-});
-export const Product = IDL.Record({
-  'id' : IDL.Nat,
-  'reviews' : IDL.Vec(IDL.Text),
-  'imageData' : IDL.Opt(IDL.Text),
-  'name' : IDL.Text,
-  'description' : IDL.Text,
-  'category' : IDL.Text,
-  'price' : IDL.Float64,
 });
 export const StripeConfiguration = IDL.Record({
   'allowedCountries' : IDL.Vec(IDL.Text),
@@ -63,30 +66,22 @@ export const TransformationOutput = IDL.Record({
   'body' : IDL.Vec(IDL.Nat8),
   'headers' : IDL.Vec(http_header),
 });
-export const CartItem = IDL.Record({
-  'productId' : IDL.Nat,
-  'quantity' : IDL.Nat,
-});
 
 export const idlService = IDL.Service({
   '_initializeAccessControlWithSecret' : IDL.Func([IDL.Text], [], []),
-  'addProduct' : IDL.Func(
-      [IDL.Text, IDL.Text, IDL.Float64, IDL.Text],
-      [IDL.Nat],
-      [],
-    ),
-  'addReview' : IDL.Func([IDL.Nat, IDL.Text], [], []),
-  'addToCart' : IDL.Func([IDL.Nat, IDL.Nat], [], []),
+  'addProduct' : IDL.Func([IDL.Text, IDL.Text, IDL.Float64, IDL.Text], [], []),
   'assignCallerUserRole' : IDL.Func([IDL.Principal, UserRole], [], []),
-  'calculateTotal' : IDL.Func([], [IDL.Float64], ['query']),
+  'clearCart' : IDL.Func([], [], []),
   'createCheckoutSession' : IDL.Func(
       [IDL.Vec(ShoppingItem), IDL.Text, IDL.Text],
       [IDL.Text],
       [],
     ),
-  'createStripeSession' : IDL.Func([IDL.Text, IDL.Text], [IDL.Text], []),
+  'getAllProducts' : IDL.Func([], [IDL.Vec(Product)], ['query']),
   'getCallerUserProfile' : IDL.Func([], [IDL.Opt(UserProfile)], ['query']),
   'getCallerUserRole' : IDL.Func([], [UserRole], ['query']),
+  'getCart' : IDL.Func([], [IDL.Vec(CartItem)], ['query']),
+  'getProducts' : IDL.Func([], [IDL.Vec(Product)], ['query']),
   'getStripeSessionStatus' : IDL.Func([IDL.Text], [StripeSessionStatus], []),
   'getUserProfile' : IDL.Func(
       [IDL.Principal],
@@ -96,16 +91,14 @@ export const idlService = IDL.Service({
   'isCallerAdmin' : IDL.Func([], [IDL.Bool], ['query']),
   'isStripeConfigured' : IDL.Func([], [IDL.Bool], ['query']),
   'saveCallerUserProfile' : IDL.Func([UserProfile], [], []),
-  'searchProducts' : IDL.Func([IDL.Text], [IDL.Vec(Product)], ['query']),
   'setStripeConfiguration' : IDL.Func([StripeConfiguration], [], []),
+  'setUserProfile' : IDL.Func([UserProfile], [], []),
   'transform' : IDL.Func(
       [TransformationInput],
       [TransformationOutput],
       ['query'],
     ),
-  'updateCartQuantity' : IDL.Func([IDL.Nat, IDL.Nat], [], []),
-  'uploadProductImage' : IDL.Func([IDL.Nat, IDL.Text], [], []),
-  'viewCart' : IDL.Func([], [IDL.Vec(CartItem)], ['query']),
+  'updateCart' : IDL.Func([IDL.Nat, IDL.Nat], [], []),
 });
 
 export const idlInitArgs = [];
@@ -123,26 +116,26 @@ export const idlFactory = ({ IDL }) => {
     'priceInCents' : IDL.Nat,
     'productDescription' : IDL.Text,
   });
+  const Product = IDL.Record({
+    'id' : IDL.Nat,
+    'imageData' : IDL.Opt(IDL.Text),
+    'name' : IDL.Text,
+    'description' : IDL.Text,
+    'category' : IDL.Text,
+    'price' : IDL.Float64,
+  });
   const UserProfile = IDL.Record({
     'name' : IDL.Text,
     'email' : IDL.Text,
     'shippingAddress' : IDL.Text,
   });
+  const CartItem = IDL.Record({ 'productId' : IDL.Nat, 'quantity' : IDL.Nat });
   const StripeSessionStatus = IDL.Variant({
     'completed' : IDL.Record({
       'userPrincipal' : IDL.Opt(IDL.Text),
       'response' : IDL.Text,
     }),
     'failed' : IDL.Record({ 'error' : IDL.Text }),
-  });
-  const Product = IDL.Record({
-    'id' : IDL.Nat,
-    'reviews' : IDL.Vec(IDL.Text),
-    'imageData' : IDL.Opt(IDL.Text),
-    'name' : IDL.Text,
-    'description' : IDL.Text,
-    'category' : IDL.Text,
-    'price' : IDL.Float64,
   });
   const StripeConfiguration = IDL.Record({
     'allowedCountries' : IDL.Vec(IDL.Text),
@@ -163,27 +156,26 @@ export const idlFactory = ({ IDL }) => {
     'body' : IDL.Vec(IDL.Nat8),
     'headers' : IDL.Vec(http_header),
   });
-  const CartItem = IDL.Record({ 'productId' : IDL.Nat, 'quantity' : IDL.Nat });
   
   return IDL.Service({
     '_initializeAccessControlWithSecret' : IDL.Func([IDL.Text], [], []),
     'addProduct' : IDL.Func(
         [IDL.Text, IDL.Text, IDL.Float64, IDL.Text],
-        [IDL.Nat],
+        [],
         [],
       ),
-    'addReview' : IDL.Func([IDL.Nat, IDL.Text], [], []),
-    'addToCart' : IDL.Func([IDL.Nat, IDL.Nat], [], []),
     'assignCallerUserRole' : IDL.Func([IDL.Principal, UserRole], [], []),
-    'calculateTotal' : IDL.Func([], [IDL.Float64], ['query']),
+    'clearCart' : IDL.Func([], [], []),
     'createCheckoutSession' : IDL.Func(
         [IDL.Vec(ShoppingItem), IDL.Text, IDL.Text],
         [IDL.Text],
         [],
       ),
-    'createStripeSession' : IDL.Func([IDL.Text, IDL.Text], [IDL.Text], []),
+    'getAllProducts' : IDL.Func([], [IDL.Vec(Product)], ['query']),
     'getCallerUserProfile' : IDL.Func([], [IDL.Opt(UserProfile)], ['query']),
     'getCallerUserRole' : IDL.Func([], [UserRole], ['query']),
+    'getCart' : IDL.Func([], [IDL.Vec(CartItem)], ['query']),
+    'getProducts' : IDL.Func([], [IDL.Vec(Product)], ['query']),
     'getStripeSessionStatus' : IDL.Func([IDL.Text], [StripeSessionStatus], []),
     'getUserProfile' : IDL.Func(
         [IDL.Principal],
@@ -193,16 +185,14 @@ export const idlFactory = ({ IDL }) => {
     'isCallerAdmin' : IDL.Func([], [IDL.Bool], ['query']),
     'isStripeConfigured' : IDL.Func([], [IDL.Bool], ['query']),
     'saveCallerUserProfile' : IDL.Func([UserProfile], [], []),
-    'searchProducts' : IDL.Func([IDL.Text], [IDL.Vec(Product)], ['query']),
     'setStripeConfiguration' : IDL.Func([StripeConfiguration], [], []),
+    'setUserProfile' : IDL.Func([UserProfile], [], []),
     'transform' : IDL.Func(
         [TransformationInput],
         [TransformationOutput],
         ['query'],
       ),
-    'updateCartQuantity' : IDL.Func([IDL.Nat, IDL.Nat], [], []),
-    'uploadProductImage' : IDL.Func([IDL.Nat, IDL.Text], [], []),
-    'viewCart' : IDL.Func([], [IDL.Vec(CartItem)], ['query']),
+    'updateCart' : IDL.Func([IDL.Nat, IDL.Nat], [], []),
   });
 };
 

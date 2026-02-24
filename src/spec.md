@@ -1,12 +1,11 @@
 # Specification
 
 ## Summary
-**Goal:** Integrate Stripe payment processing to enable secure online payments and automatic order confirmation.
+**Goal:** Fix the deployment error from Version 5 to successfully deploy the Stripe payment integration to production.
 
 **Planned changes:**
-- Add Stripe payment integration to the payment page
-- Implement backend webhook handling for Stripe payment events
-- Update order confirmation flow to automatically confirm orders upon successful Stripe payment
-- Replace or complement existing payment methods (Cash on Delivery and UPI) with Stripe checkout
+- Diagnose and resolve the backend actor compilation/initialization error that prevented Version 5 deployment
+- Ensure Stripe payment integration deploys correctly to the production network
+- Verify all payment features remain functional after deployment
 
-**User-visible outcome:** Users can securely pay for orders using Stripe's payment system, and orders are automatically confirmed when payment succeeds.
+**User-visible outcome:** The application successfully deploys to production with all Stripe payment features working correctly, allowing users to complete purchases without interruption.
